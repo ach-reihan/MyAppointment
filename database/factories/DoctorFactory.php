@@ -18,10 +18,12 @@ class DoctorFactory extends Factory
      */
     public function definition(): array
     {
+        $faker = fake('id_ID');
+
         return [
             'user_id' => User::factory()->doctor(),
-            'name' => fake()->name(),
-            'specialization' => 'Spesialis ' . fake()->randomElement(['Umum', 'Gigi', 'Anak', 'Penyakit Dalam', 'Mata']),
+            'name' => $faker->name(),
+            'specialization' => 'Spesialis ' . $faker->randomElement(['Umum', 'Gigi', 'Anak', 'Penyakit Dalam', 'Mata']),
         ];
     }
 }
