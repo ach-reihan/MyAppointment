@@ -5,6 +5,7 @@ namespace Database\Seeders;
 use App\Models\Appointment;
 use App\Models\Doctor;
 use App\Models\Patient;
+use App\Models\Clinic;
 use Illuminate\Database\Seeder;
 use Faker\Factory as Faker;
 
@@ -18,15 +19,16 @@ class AppointmentSeeder extends Seeder
         $faker = Faker::create('id_ID');
         $patients = Patient::query()->get();
         $doctors = Doctor::query()->get();
+        $clinics = Clinic::query()->pluck('id')->all();
         $statuses = ['pending', 'confirmed', 'completed', 'cancelled'];
 
         for ($i = 0; $i < 20; $i++) {
             $patient = $faker->randomElement($patients);
             $doctor = $faker->randomElement($doctors);
-            $clinicId = $doctor->clinics()->first()->id;
+            $clinicId = $faker->randomElement($clinics);
             $status = ($i < 10) ? 'completed' : $faker->randomElement($statuses);
 
-            Appointment::create([
+            Appointment::factory()->create([
                 'patient_id' => $patient->id,
                 'doctor_id' => $doctor->id,
                 'clinic_id' => $clinicId,
