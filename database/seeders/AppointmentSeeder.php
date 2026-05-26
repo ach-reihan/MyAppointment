@@ -33,7 +33,6 @@ class AppointmentSeeder extends Seeder
                 'doctor_id' => $doctor->id,
                 'clinic_id' => $clinicId,
                 'appointment_datetime' => $faker->dateTimeBetween('-1 month', '+1 month'),
-                'complaint' => $faker->sentence(6),
                 'status' => $status,
             ]);
         }
