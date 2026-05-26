@@ -18,12 +18,14 @@ class PatientFactory extends Factory
      */
     public function definition(): array
     {
+        $faker = fake('id_ID');
+
         return [
             'user_id' => User::factory()->patient(),
-            'full_name' => fake()->name(),
-            'address' => fake()->address(),
-            'date_of_birth' => fake()->date('Y-m-d', '2010-01-01'),
-            'phone_number' => '08' . fake()->numerify('##########'),
+            'full_name' => $faker->name(),
+            'address' => $faker->address(),
+            'date_of_birth' => $faker->date('Y-m-d', '2010-01-01'),
+            'phone_number' => '08' . $faker->numerify('##########'),
         ];
     }
 }
