@@ -74,11 +74,9 @@
                 </div>
             </div>
 
-            {{-- Bar Chart --}}
             <div class="flex items-end justify-between gap-2 h-40 px-2">
                 <template x-for="(bar, i) in bars" :key="i">
                     <div class="flex-1 flex flex-col items-center gap-1.5 group relative">
-                        {{-- Tooltip --}}
                         <div x-show="tooltip === i"
                              x-transition:enter="transition ease-out duration-100"
                              x-transition:enter-start="opacity-0 scale-95"
@@ -88,7 +86,6 @@
                             <div class="absolute -bottom-1 left-1/2 -translate-x-1/2 w-2 h-2 bg-slate-800 rotate-45"></div>
                         </div>
 
-                        {{-- Bar --}}
                         <div class="w-full relative rounded-t-md cursor-pointer transition-all duration-200"
                              :style="'height: ' + (bar.pct * 1.4) + 'px;'"
                              :class="tooltip === i ? 'bg-blue-700' : 'bg-blue-500 group-hover:bg-blue-600'"
@@ -96,7 +93,6 @@
                              @mouseleave="tooltip = null">
                         </div>
 
-                        {{-- Day Label --}}
                         <span class="text-[10px] text-slate-400 font-medium" x-text="bar.day"></span>
                     </div>
                 </template>
@@ -104,7 +100,6 @@
 
         </div>
 
-        {{-- RECENT ACTIVITY --}}
         <div class="lg:col-span-2 bg-white rounded-2xl border border-slate-100 shadow-sm p-5 flex flex-col">
 
             <div class="flex items-center justify-between mb-4">
