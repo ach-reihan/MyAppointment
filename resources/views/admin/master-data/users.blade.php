@@ -1,0 +1,205 @@
+<x-app-layout :title="'Master Data Management – My Appointment'">
+
+    <div x-data="{ 
+        openModal: false, 
+        isEdit: false,
+        modalTitle: '',
+        
+        // Field Form
+        editingId: '',
+        username: '',
+        password: '',
+        roleAkses: '',
+
+        // Data & Pencarian
+        searchQuery: '',
+        userList: {{ json_encode($users) }},
+
+        get filteredUsers() {
+            if (this.searchQuery === '') return this.userList;
+            const term = this.searchQuery.toLowerCase();
+            return this.userList.filter(user => {
+                return user.username.toLowerCase().includes(term) || 
+                       user.role.toLowerCase().includes(term) ||
+                       user.id.toLowerCase().includes(term);
+            });
+        },
+
+        // Fungsi Buka Form Tambah
+        openCreateModal() {
+            this.isEdit = false;
+            this.modalTitle = 'Tambah User Baru';
+            this.editingId = '';
+            this.username = '';
+            this.password = '';
+            this.roleAkses = '';
+            this.openModal = true;
+        },
+
+        // Fungsi Buka Form Edit
+        openEditModal(user) {
+            this.isEdit = true;
+            this.modalTitle = 'Edit Role Akses';
+            this.editingId = user.id;
+            this.username = user.username;
+            this.roleAkses = user.role;
+            this.password = ''; 
+            this.openModal = true;
+        },
+
+        // FUNGSI UTAMA: Simpan & Update Data ke Tabel
+        saveData() {
+            if (this.isEdit) {
+                // Update data yang sudah ada
+                let index = this.userList.findIndex(u => u.id === this.editingId);
+                if(index !== -1) {
+                    this.userList[index].role = this.roleAkses;
+                    // (Catatan: Password diabaikan karena ini mock data frontend)
+                }
+            } else {
+                // Generate data baru (Push ke array atas)
+                let newId = 'USR-00' + (this.userList.length + 1);
+                
+                // Format Tanggal (Contoh: 14 Okt 2023, 14:20)
+                let date = new Date();
+                let options = { day: 'numeric', month: 'short', year: 'numeric', hour: '2-digit', minute:'2-digit' };
+                let dateStr = date.toLocaleDateString('id-ID', options).replace('.', ':');
+
+                this.userList.unshift({
+                    id: newId,
+                    username: this.username,
+                    role: this.roleAkses,
+                    created_at: dateStr
+                });
+            }
+            this.openModal = false;
+        },
+
+        // Fungsi Hapus Data
+        deleteData(id) {
+            if(confirm('Apakah Anda yakin ingin menghapus user ini?')) {
+                this.userList = this.userList.filter(u => u.id !== id);
+            }
+        }
+    }"
+    @global-search.window="searchQuery = $event.detail"
+    >
+        <div class="mb-6">
+            <h1 class="text-xl font-bold text-slate-800 tracking-tight">Master Data Management</h1>
+            <p class="text-sm text-slate-500 mt-0.5">Kelola informasi fundamental rumah sakit dalam satu dasbor terpusat.</p>
+        </div>
+
+        <div class="flex flex-wrap gap-2 mb-6 bg-slate-100 p-1.5 rounded-xl w-max border border-slate-200/60">
+            <a href="{{ route('master-data.users') }}" class="px-4 py-2 text-xs font-semibold rounded-lg bg-white text-blue-600 shadow-sm transition-all">Manajemen User</a>
+            <a href="{{ route('master-data.doctors') }}" class="px-4 py-2 text-xs font-semibold rounded-lg text-slate-600 hover:text-slate-900 transition-colors">Data Dokter</a>
+            <a href="{{ route('master-data.patients') }}" class="px-4 py-2 text-xs font-semibold rounded-lg text-slate-600 hover:text-slate-900 transition-colors">Data Pasien</a>
+            <a href="{{ route('master-data.polyclinics') }}" class="px-4 py-2 text-xs font-semibold rounded-lg text-slate-600 hover:text-slate-900 transition-colors">Data Poliklinik</a>
+        </div>
+
+        <div class="bg-white rounded-2xl border border-slate-100 shadow-sm overflow-hidden">
+            <div class="p-5 flex items-center justify-between border-b border-slate-100 flex-wrap gap-4">
+                <div>
+                    <h2 class="text-sm font-bold text-slate-800">Daftar Pengguna Sistem</h2>
+                    <p class="text-xs text-slate-400 mt-0.5">Menampilkan <span x-text="filteredUsers.length"></span> akun</p>
+                </div>
+
+                <button 
+                    @click="openCreateModal()" 
+                    class="inline-flex items-center gap-2 px-4 py-2.5 bg-blue-600 text-white rounded-xl text-xs font-semibold hover:bg-blue-700 transition-colors shadow-sm"
+                >
+                    <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z"/></svg>
+                    Tambah User Baru
+                </button>
+            </div>
+
+            <div class="overflow-x-auto">
+                <table class="w-full text-left border-collapse">
+                    <thead>
+                        <tr class="bg-slate-50/70 border-b border-slate-100">
+                            <th class="px-6 py-3.5 text-xs font-bold text-slate-400 tracking-wider">ID</th>
+                            <th class="px-6 py-3.5 text-xs font-bold text-slate-400 tracking-wider">USERNAME</th>
+                            <th class="px-6 py-3.5 text-xs font-bold text-slate-400 tracking-wider">ROLE</th>
+                            <th class="px-6 py-3.5 text-xs font-bold text-slate-400 tracking-wider">CREATED AT</th>
+                            <th class="px-6 py-3.5 text-xs font-bold text-slate-400 tracking-wider text-right">ACTIONS</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-slate-100">
+                        
+                        <template x-for="user in filteredUsers" :key="user.id">
+                            <tr class="hover:bg-slate-50/50 transition-colors">
+                                <td class="px-6 py-4 text-xs font-semibold text-slate-500" x-text="user.id"></td>
+                                <td class="px-6 py-4 text-xs font-bold text-slate-700" x-text="user.username"></td>
+                                <td class="px-6 py-4 text-xs">
+                                    <span 
+                                        class="px-2.5 py-1 text-[10px] font-bold rounded-md border"
+                                        :class="{
+                                            'bg-rose-50 text-rose-600 border-rose-100': user.role === 'Admin',
+                                            'bg-blue-50 text-blue-600 border-blue-100': user.role === 'Dokter',
+                                            'bg-slate-100 text-slate-600 border-slate-200': user.role === 'Pasien'
+                                        }"
+                                        x-text="user.role"
+                                    ></span>
+                                </td>
+                                <td class="px-6 py-4 text-xs text-slate-500" x-text="user.created_at"></td>
+                                <td class="px-6 py-4 text-xs text-right">
+                                    <div class="inline-flex items-center gap-2">
+                                        
+                                        <button 
+                                            @click="openEditModal(user)"
+                                            class="p-2 text-slate-400 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-all"
+                                            title="Edit Role"
+                                        >
+                                            <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"/></svg>
+                                        </button>
+                                        
+                                        <button 
+                                            @click="deleteData(user.id)"
+                                            class="p-2 text-slate-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition-all"
+                                            title="Hapus"
+                                        >
+                                            <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-4v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
+                                        </button>
+                                    </div>
+                                </td>
+                            </tr>
+                        </template>
+
+                        <tr x-show="filteredUsers.length === 0" style="display: none;">
+                            <td colspan="5" class="px-6 py-8 text-center text-slate-400 text-sm">Tidak ada data ditemukan.</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <div x-show="openModal" class="fixed inset-0 z-50 flex items-center justify-center p-4" style="display: none;">
+            <div x-show="openModal" x-transition.opacity.duration.200ms @click="openModal = false" class="absolute inset-0 bg-slate-900/40 backdrop-blur-sm"></div>
+
+            <div 
+                x-show="openModal"
+                x-transition:enter="transition ease-out duration-200"
+                x-transition:enter-start="opacity-0 scale-95"
+                x-transition:enter-end="opacity-100 scale-100"
+                x-transition:leave="transition ease-in duration-150"
+                x-transition:leave-start="opacity-100 scale-100"
+                x-transition:leave-end="opacity-0 scale-95"
+                class="bg-white rounded-2xl shadow-xl border border-slate-100 w-full max-w-lg overflow-hidden z-10 relative"
+            >
+                <div class="px-6 py-4 border-b border-slate-100 flex items-center justify-between">
+                    <h3 class="text-base font-bold text-slate-800" x-text="modalTitle"></h3>
+                    <button @click="openModal = false" class="text-slate-400 hover:text-slate-600 rounded-lg p-1.5 hover:bg-slate-50 transition-colors">
+                        <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/></svg>
+                    </button>
+                </div>
+
+                <div x-show="!isEdit">
+                    @include('admin.form.user.create')
+                </div>
+                <div x-show="isEdit" style="display: none;">
+                    @include('admin.form.user.edit')
+                </div>
+            </div>
+        </div>
+
+    </div>
+</x-app-layout>
