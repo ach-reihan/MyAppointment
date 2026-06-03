@@ -22,7 +22,7 @@ class DoctorFactory extends Factory
 
         return [
             'user_id' => User::factory()->doctor(),
-            'name' => $faker->name(),
+            'name' => 'Dr. ' . $faker->name(),
             'specialization' => 'Spesialis ' . $faker->randomElement(['Umum', 'Gigi', 'Anak', 'Penyakit Dalam', 'Mata']),
         ];
     }
