@@ -4,6 +4,7 @@ namespace Database\Seeders;
 
 use App\Models\Clinic;
 use App\Models\Doctor;
+use App\Models\User;
 use Illuminate\Database\Seeder;
 use Faker\Factory as Faker;
 
@@ -18,8 +19,14 @@ class DoctorSeeder extends Seeder
         $specializations = ['Umum', 'Gigi', 'Anak', 'Penyakit Dalam', 'Mata'];
         $clinicIds = Clinic::query()->pluck('id')->all();
 
-        foreach ($specializations as $index => $specialization) {
+        $doctorUsers = User::query()->where('role', 'doctor')->get();
+
+        foreach ($doctorUsers->values() as $index => $user) {
+            $specialization = $specializations[$index % count($specializations)];
+
             $doctor = Doctor::factory()->create([
+                'user_id' => $user->id,
+                'name' => 'Dr. ' . $user->name,
                 'specialization' => 'Spesialis ' . $specialization,
             ]);
 
