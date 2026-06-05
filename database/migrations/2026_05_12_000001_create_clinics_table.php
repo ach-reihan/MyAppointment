@@ -12,8 +12,10 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('clinics', function (Blueprint $table) {
-            $table->id();
-            $table->string('name', 100);
+            $table->ulid('id')->primary();
+            $table->string('name');
+            $table->time('opens_at')->default('08:00:00');
+            $table->time('closes_at')->default('16:00:00');
             $table->text('description')->nullable();
             $table->timestamps();
         });
