@@ -11,7 +11,6 @@ class LandingController
      */
     public function index()
     {
-        // Mengirimkan mock data jika nanti diperlukan, saat ini langsung return view
         return view('public.landing');
     }
 }

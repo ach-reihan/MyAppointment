@@ -51,13 +51,11 @@ class AuthController
 
     public function processLogin(Request $request)
     {
-        // Ambil input dari user (bisa berupa email atau username)
         $loginId = strtolower(trim($request->input('login_id')));
-        $password = $request->input('password'); // (Password kita abaikan dulu validasinya di tahap mock ini)
+        $password = $request->input('password'); 
 
         $userRole = null;
 
-        // Mencari user di dalam Mock Database berdasarkan Email ATAU Username
         foreach ($this->mockDatabase as $user) {
             if ($user['email'] === $loginId || strtolower($user['username']) === $loginId) {
                 $userRole = $user['role'];
@@ -65,9 +63,7 @@ class AuthController
             }
         }
 
-        // Redirect berdasarkan role yang ditemukan
         if ($userRole === 'admin') {
-            // UBAH 'admin.dashboard' MENJADI 'dashboard'
             return redirect()->route('dashboard')->with('success', 'Selamat datang kembali, Admin!');
         } elseif ($userRole === 'dokter') {
             return redirect()->route('doctor.dashboard')->with('success', 'Selamat bertugas, Dokter!');
@@ -75,7 +71,6 @@ class AuthController
             return redirect()->route('patient.dashboard')->with('success', 'Selamat datang di Healthink!');
         }
 
-        // Jika email/username tidak ditemukan di mock database
         return back()->with('error', 'Kredensial tidak valid. Akun tidak ditemukan.');
     }
 
