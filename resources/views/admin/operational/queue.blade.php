@@ -3,15 +3,12 @@
         openHistory: false, 
         patientName: '',
         
-        // State Modal Tambah
         openQueueModal: false,
         formQueue: { id: '', nama: '', dokter: '', poli: '', waktu: '', status: 'Menunggu' },
 
-        // State Data & Pencarian
         searchQuery: '',
         queueList: {{ json_encode($queues) }},
 
-        // ===== 1. FILTER PENCARIAN =====
         get filteredQueues() {
             if (this.searchQuery === '') return this.queueList;
             const term = this.searchQuery.toLowerCase();
@@ -23,9 +20,8 @@
             });
         },
 
-        // ===== 2. KONFIGURASI PAGINASI (Berdasarkan Data Terfilter) =====
         currentPage: 1,
-        itemsPerPage: 2, // Set 2 per halaman
+        itemsPerPage: 4, 
 
         get totalPages() {
             return Math.ceil(this.filteredQueues.length / this.itemsPerPage) || 1;
@@ -37,7 +33,6 @@
             return this.filteredQueues.slice(start, end);
         },
 
-        // ===== 3. FUNGSI AKSI TABEL =====
         markAsDone(id) {
             let index = this.queueList.findIndex(item => item.id === id);
             if (index !== -1) {
@@ -54,7 +49,6 @@
             }
         },
 
-        // ===== 4. FUNGSI MODAL TAMBAH DATA =====
         openNewPatientModal() {
             this.formQueue = {
                 id: '#PX-' + Math.floor(Math.random() * 900000 + 100000),
@@ -78,8 +72,8 @@
             });
             
             this.openQueueModal = false;
-            this.searchQuery = ''; // Reset pencarian jika ada
-            this.currentPage = 1; // Kembali ke halaman pertama
+            this.searchQuery = ''; 
+            this.currentPage = 1; 
         }
     }"
     @global-search.window="searchQuery = $event.detail; currentPage = 1" 
@@ -123,14 +117,6 @@
         <div class="bg-white rounded-2xl border border-slate-100 shadow-sm overflow-hidden flex flex-col">
             <div class="p-5 flex items-center justify-between border-b border-slate-100">
                 <h2 class="text-sm font-bold text-slate-800">Jadwal Janji Temu Hari Ini</h2>
-                <div class="flex gap-2">
-                    <button class="p-1.5 border border-slate-200 rounded-lg text-slate-500 hover:bg-slate-50">
-                        <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z" /></svg>
-                    </button>
-                    <button class="p-1.5 border border-slate-200 rounded-lg text-slate-500 hover:bg-slate-50">
-                        <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" /></svg>
-                    </button>
-                </div>
             </div>
 
             <div class="overflow-x-auto flex-1">

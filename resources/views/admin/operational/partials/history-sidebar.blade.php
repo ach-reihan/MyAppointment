@@ -77,9 +77,6 @@
                 </div>
 
                 <div class="bg-white px-4 py-4 border-t border-slate-100 flex items-center justify-between gap-3 shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.05)]">
-                    <button class="flex-1 bg-blue-600 text-white px-4 py-2.5 rounded-xl text-xs font-bold hover:bg-blue-700 transition-colors shadow-sm text-center">
-                        Unduh PDF
-                    </button>
                     <button @click="openHistory = false" class="flex-1 bg-slate-50 text-slate-600 border border-slate-200 px-4 py-2.5 rounded-xl text-xs font-bold hover:bg-slate-100 transition-colors text-center">
                         Tutup
                     </button>

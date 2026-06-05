@@ -2,41 +2,52 @@
 
 namespace App\Services;
 
+use App\Models\Patient;
+use App\Models\Doctor;
+use App\Models\Appointment;
+use App\Models\Clinic;
+use Carbon\Carbon;
+
 class DashboardService
 {
-    /**
-     * Get macro summary stats for the dashboard header cards.
-     */
     public function getMacroStats(): array
     {
+        // Ambil data asli dari Model
+        $totalPasien = Patient::count();
+        $totalDokter = Doctor::count();
+        $janjiHariIni = Appointment::whereDate('appointment_datetime', Carbon::today())->count();
+        $poliAktif = Clinic::count();
+
+        // Anda bisa menambahkan logika perbandingan bulan lalu vs bulan ini untuk 'badge' jika mau
+        // Untuk sekarang kita tampilkan nilai aktualnya
         return [
             [
                 'label'   => 'Total Pasien',
-                'value'   => '1.284',
-                'badge'   => '+12%',
-                'badge_type' => 'up',
+                'value'   => number_format($totalPasien, 0, ',', '.'),
+                'badge'   => 'Update',
+                'badge_type' => 'success',
                 'icon'    => 'users',
                 'color'   => 'blue',
             ],
             [
                 'label'   => 'Total Dokter',
-                'value'   => '48',
-                'badge'   => 'Tetap',
+                'value'   => $totalDokter,
+                'badge'   => 'Aktif',
                 'badge_type' => 'neutral',
                 'icon'    => 'doctor',
                 'color'   => 'indigo',
             ],
             [
                 'label'   => 'Janji Temu Hari Ini',
-                'value'   => '156',
-                'badge'   => '8 Menunggu',
+                'value'   => $janjiHariIni,
+                'badge'   => 'Hari Ini',
                 'badge_type' => 'warning',
                 'icon'    => 'calendar',
                 'color'   => 'amber',
             ],
             [
                 'label'   => 'Poli Aktif',
-                'value'   => '12',
+                'value'   => $poliAktif,
                 'badge'   => 'Full Ops',
                 'badge_type' => 'success',
                 'icon'    => 'clinic',
@@ -45,56 +56,43 @@ class DashboardService
         ];
     }
 
-    /**
-     * Get weekly patient visit data for the bar chart.
-     */
     public function getWeeklyVisits(): array
     {
-        return [
-            ['day' => 'Sen', 'count' => 82,  'pct' => 68],
-            ['day' => 'Sel', 'count' => 95,  'pct' => 79],
-            ['day' => 'Rab', 'count' => 120, 'pct' => 100],
-            ['day' => 'Kam', 'count' => 108, 'pct' => 90],
-            ['day' => 'Jum', 'count' => 113, 'pct' => 94],
-            ['day' => 'Sab', 'count' => 47,  'pct' => 39],
-            ['day' => 'Min', 'count' => 20,  'pct' => 17],
-        ];
+        // Contoh query untuk mengambil data 7 hari terakhir secara dinamis
+        $data = [];
+        for ($i = 6; $i >= 0; $i--) {
+            $date = Carbon::today()->subDays($i);
+            $count = Appointment::whereDate('appointment_datetime', $date)->count();
+            
+            // Asumsi max kapasitas klinik per hari adalah 150 untuk persentase grafik (sesuaikan kebutuhan)
+            $pct = ($count / 150) * 100; 
+
+            $data[] = [
+                'day'   => $date->translatedFormat('D'), // Sen, Sel, dll
+                'count' => $count,
+                'pct'   => min($pct, 100) // Maksimal tinggi bar 100%
+            ];
+        }
+        return $data;
     }
 
-    /**
-     * Get recent activity log items.
-     */
     public function getRecentActivities(): array
     {
-        return [
-            [
-                'type'    => 'selesai',
-                'title'   => 'Janji Temu Selesai',
-                'desc'    => 'Bpk. Adi Prasetyo di Poli Gigi',
-                'time'    => '10:45 WIB',
-                'color'   => 'emerald',
-            ],
-            [
-                'type'    => 'masuk',
-                'title'   => 'Pasien Masuk',
-                'desc'    => 'Ibu Siti Aminah (Antrian A-24)',
-                'time'    => '11:12 WIB',
-                'color'   => 'blue',
-            ],
-            [
-                'type'    => 'baru',
-                'title'   => 'Pasien Baru Terdaftar',
-                'desc'    => 'Bpk. Rizky Firmansyah',
-                'time'    => '11:30 WIB',
-                'color'   => 'indigo',
-            ],
-            [
-                'type'    => 'reschedule',
-                'title'   => 'Reschedule Janji Temu',
-                'desc'    => 'Ny. Dewi Kusuma – Poli Umum',
-                'time'    => '11:45 WIB',
-                'color'   => 'amber',
-            ],
-        ];
+        // Ambil 4 janji temu terakhir yang paling baru di-update
+        $recentAppointments = Appointment::latest('updated_at')->take(4)->get();
+        
+        $activities = [];
+        foreach ($recentAppointments as $apt) {
+            // Mapping status (asumsi ada kolom 'status' di tabel appointments)
+            $activities[] = [
+                'type'  => 'baru', // bisa disesuaikan dengan $apt->status (selesai, baru, dsb)
+                'title' => 'Update Janji Temu',
+                'desc'  => 'ID Janji: ' . substr($apt->id, 0, 8),
+                'time'  => $apt->updated_at->format('H:i') . ' WIB',
+                'color' => 'indigo',
+            ];
+        }
+
+        return $activities;
     }
 }
