@@ -26,14 +26,16 @@ class DoctorSeeder extends Seeder
 
             $doctor = Doctor::factory()->create([
                 'user_id' => $user->id,
-                'name' => 'Dr. ' . $user->name,
                 'specialization' => 'Spesialis ' . $specialization,
             ]);
 
             if (! empty($clinicIds)) {
-                $doctor->clinics()->attach(
-                    $faker->randomElements($clinicIds, rand(1, 2))
-                );
+                foreach ($faker->randomElements($clinicIds, rand(1, 2)) as $clinicId) {
+                    $doctor->clinics()->attach($clinicId, [
+                        'available_from' => '08:00:00',
+                        'available_to' => '16:00:00',
+                    ]);
+                }
             }
         }
     }
