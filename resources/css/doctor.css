@@ -1,0 +1,144 @@
+/* Custom Overrides for precise UI matching */
+body {
+    background-color: #f8f9fc; /* Light gray background */
+    font-family: 'Inter', 'Segoe UI', sans-serif;
+}
+
+/* Sidebar Styling */
+.sidebar {
+    width: 260px;
+    background-color: #ffffff;
+    border-right: 1px solid #edf2f7;
+    height: 100vh;
+    position: fixed;
+    top: 0;
+    left: 0;
+    display: flex;
+    flex-direction: column;
+}
+.sidebar-brand {
+    padding: 1.5rem;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+.sidebar-nav .nav-link {
+    color: #727f90;
+    padding: 0.75rem 1.5rem;
+    margin: 0.2rem 1rem;
+    border-radius: 0.5rem;
+    font-weight: 500;
+}
+.sidebar-nav .nav-link.active {
+    background-color: #e0e7ff;
+    color: #2563eb;
+}
+.sidebar-nav .nav-link:hover:not(.active) {
+    background-color: #f1f5f9;
+}
+
+/* Main Content Layout */
+.main-content {
+    margin-left: 260px;
+    padding: 0;
+}
+
+/* Topbar */
+.topbar {
+    background-color: #ffffff;
+    height: 70px;
+    border-bottom: 1px solid #edf2f7;
+    padding: 0 2rem;
+}
+.search-input {
+    background-color: #f1f5f9;
+    border: none;
+    border-radius: 0.5rem;
+    width: 200%;
+}
+
+.search-input:focus {
+    background-color: #e2e8f0;
+    box-shadow: none;
+}
+
+/* Cards and Utilities */
+.card-custom {
+    border: none;
+    border-radius: 0.75rem;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+}
+.card-blue {
+    background-color: #1d4ed8; /* Primary Blue */
+    background-image: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%);
+    color: white;
+}
+.icon-box {
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 8px;
+}
+.icon-box-blue { background-color: #e0e7ff; color: #2563eb; }
+.icon-box-gray { background-color: #f1f5f9; color: #475569; }
+
+/* Table Styling */
+.table > thead {
+    color: #64748b;
+    font-size: 0.85rem;
+    letter-spacing: 0.5px;
+}
+.table > tbody > tr > td {
+    vertical-align: middle;
+    padding: 1rem 0.5rem;
+    border-bottom: 1px solid #f1f5f9;
+}
+.patient-number {
+    background-color: #f1f5f9;
+    color: #0f172a;
+    font-weight: 600;
+    padding: 0.25rem 0.6rem;
+    border-radius: 20px;
+    font-size: 0.85rem;
+}
+
+/* Custom Badges */
+.badge-menunggu {
+    background-color: #fef3c7;
+    color: #d97706;
+    font-weight: 500;
+    padding: 0.4em 0.8em;
+}
+.badge-selesai {
+    background-color: #dcfce7;
+    color: #16a34a;
+    font-weight: 500;
+    padding: 0.4em 0.8em;
+}
+
+.custom-input { background-color: #f4f6f8; border: none; resize: none; border-radius: 8px;}
+.custom-input:focus { background-color: #e9ecef; box-shadow: none; }
+.floating-btn { position: fixed; bottom: 30px; right: 40px; border-radius: 30px; padding: 10px 25px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
+
+/* Styling khusus untuk area scroll horizontal */
+.horizontal-scroll {
+    overflow-x: auto;
+    scrollbar-width: thin; /* Untuk Firefox */
+}
+
+/* Custom Scrollbar untuk Chrome/Edge/Safari */
+.horizontal-scroll::-webkit-scrollbar {
+    height: 6px;
+}
+.horizontal-scroll::-webkit-scrollbar-track {
+    background: transparent;
+}
+.horizontal-scroll::-webkit-scrollbar-thumb {
+    background-color: #cbd5e1;
+    border-radius: 10px;
+}
+.horizontal-scroll::-webkit-scrollbar-thumb:hover {
+    background-color: #94a3b8;
+}
