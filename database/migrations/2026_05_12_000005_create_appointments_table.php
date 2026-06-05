@@ -12,14 +12,20 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('appointments', function (Blueprint $table) {
-            $table->id();
-            $table->foreignId('patient_id')->constrained()->cascadeOnDelete();
-            $table->foreignId('doctor_id')->constrained()->cascadeOnDelete();
-            $table->foreignId('clinic_id')->constrained()->cascadeOnDelete();
-            $table->dateTime('appointment_datetime');
+            $table->ulid('id')->primary();
+
+            $table->foreignUlid('patient_id')->constrained()->cascadeOnDelete();
+            $table->foreignUlid('doctor_id')->constrained()->cascadeOnDelete();
+            $table->foreignUlid('clinic_id')->constrained()->cascadeOnDelete();
+
+            $table->timestampTz('appointment_datetime');
             $table->text('complaint');
-            $table->string('status', 20)->default('pending');
+
+            $table->enum('status', ['pending', 'approved', 'cancelled', 'completed'])->default('pending');
             $table->timestamps();
+
+            $table->index(['doctor_id', 'status']);
+            $table->index(['patient_id', 'appointment_datetime']);
         });
     }
 
