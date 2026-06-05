@@ -20,7 +20,7 @@ class AppointmentSeeder extends Seeder
         $patients = Patient::query()->get();
         $doctors = Doctor::query()->get();
         $clinics = Clinic::query()->pluck('id')->all();
-        $statuses = ['pending', 'confirmed', 'completed', 'cancelled'];
+        $statuses = ['pending', 'approved', 'completed', 'cancelled'];
 
         for ($i = 0; $i < 20; $i++) {
             $patient = $faker->randomElement($patients);
