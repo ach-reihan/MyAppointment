@@ -20,7 +20,6 @@ class PatientSeeder extends Seeder
         foreach ($patientUsers as $user) {
             Patient::factory()->create([
                 'user_id' => $user->id,
-                'name' => $user->name,
                 'address' => $faker->address(),
                 'date_of_birth' => $faker->date('Y-m-d', '2010-01-01'),
                 'phone_number' => '08' . $faker->numerify('##########'),
