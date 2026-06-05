@@ -20,27 +20,5 @@ Route::get('/register', [AuthController::class, 'showRegister'])->name('register
 Route::post('/login', [AuthController::class, 'processLogin'])->name('login.process');
 Route::post('/register', [AuthController::class, 'processRegister'])->name('register.process');
 
-Route::prefix('admin')->group(function () {
-    
-    Route::get('/dashboard', [AdminDashboard::class, 'index'])->name('dashboard');
-
-    Route::prefix('master-data')->name('master-data.')->group(function () {
-        Route::get('/users',       [MasterDataController::class, 'users'])->name('users');
-        Route::get('/doctors',     [MasterDataController::class, 'doctors'])->name('doctors');
-        Route::get('/patients',    [MasterDataController::class, 'patients'])->name('patients');
-        Route::get('/polyclinics', [MasterDataController::class, 'polyclinics'])->name('polyclinics');
-    });
-
-    Route::prefix('operational')->name('operational.')->group(function () {
-        Route::get('/queue',   [OperationalController::class, 'queue'])->name('queue');
-        Route::get('/history', [OperationalController::class, 'history'])->name('history');
-    });
-});
-
-Route::prefix('doctor')->name('doctor.')->group(function () {
-    Route::get('/dashboard', [DoctorDashboard::class, 'index'])->name('dashboard');
-});
-
-Route::prefix('patient')->name('patient.')->group(function () {
-    Route::get('/dashboard', [PatientDashboard::class, 'index'])->name('dashboard');
-});
+require __DIR__.'/admin.php';
+require __DIR__.'/doctor.php';
