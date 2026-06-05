@@ -12,8 +12,13 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('clinic_doctor', function (Blueprint $table) {
-            $table->foreignId('clinic_id')->constrained()->cascadeOnDelete();
-            $table->foreignId('doctor_id')->constrained()->cascadeOnDelete();
+            $table->foreignUlid('clinic_id')->constrained()->cascadeOnDelete();
+            $table->foreignUlid('doctor_id')->constrained()->cascadeOnDelete();
+            $table->time('available_from')->default('08:00:00');
+            $table->time('available_to')->default('16:00:00');
+
+            $table->primary(['clinic_id', 'doctor_id']);
+            $table->index('doctor_id');
         });
     }
 
