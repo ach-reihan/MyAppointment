@@ -14,9 +14,9 @@
 
     <nav class="flex-1 px-3 py-4 space-y-1 overflow-y-auto">
 
-        <a href="{{ route('dashboard') }}"
+        <a href="{{ route('admin.dashboard') }}"
            class="group flex items-center gap-3 px-3 py-2.5 rounded-lg transition-all duration-150
-                  {{ request()->routeIs('dashboard') ? 'bg-blue-600 text-white shadow-sm' : 'text-slate-600 hover:bg-blue-50 hover:text-blue-600' }}">
+                  {{ request()->routeIs('admin.dashboard') ? 'bg-blue-600 text-white shadow-sm' : 'text-slate-600 hover:bg-blue-50 hover:text-blue-600' }}">
             <svg class="w-5 h-5 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8">
                 <path stroke-linecap="round" stroke-linejoin="round" d="M3 3h7v7H3zM14 3h7v7h-7zM14 14h7v7h-7zM3 14h7v7H3z"/>
             </svg>
@@ -26,7 +26,7 @@
         <div x-data="{ open: {{ request()->routeIs('master-data.*') ? 'true' : 'false' }} }">
             <button @click="open = !open"
                 class="w-full group flex items-center gap-3 px-3 py-2.5 rounded-lg transition-all duration-150
-                       {{ request()->routeIs('master-data.*') ? 'text-blue-600 bg-blue-50' : 'text-slate-600 hover:bg-blue-50 hover:text-blue-600' }}">
+                       {{ request()->routeIs('admin.master-data.*') ? 'text-blue-600 bg-blue-50' : 'text-slate-600 hover:bg-blue-50 hover:text-blue-600' }}">
                 <svg class="w-5 h-5 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8">
                     <path stroke-linecap="round" stroke-linejoin="round" d="M4 6h16M4 10h16M4 14h16M4 18h16"/>
                 </svg>
@@ -36,28 +36,28 @@
                 </svg>
             </button>
             <div x-show="open && (sidebarOpen || mobileSidebarOpen)" x-transition class="mt-1 ml-8 space-y-1">
-                <a href="{{ route('master-data.users') }}" class="block px-3 py-2 text-xs rounded-md transition-colors
-                   {{ request()->routeIs('master-data.users') ? 'text-blue-600 bg-blue-50 font-medium' : 'text-slate-500 hover:text-blue-600 hover:bg-blue-50' }}">
+                <a href="{{ route('admin.master-data.users') }}" class="block px-3 py-2 text-xs rounded-md transition-colors
+                   {{ request()->routeIs('admin.master-data.users') ? 'text-blue-600 bg-blue-50 font-medium' : 'text-slate-500 hover:text-blue-600 hover:bg-blue-50' }}">
                     Manajemen User
                 </a>
-                <a href="{{ route('master-data.doctors') }}" class="block px-3 py-2 text-xs rounded-md transition-colors
-                   {{ request()->routeIs('master-data.doctors') ? 'text-blue-600 bg-blue-50 font-medium' : 'text-slate-500 hover:text-blue-600 hover:bg-blue-50' }}">
+                <a href="{{ route('admin.master-data.doctors') }}" class="block px-3 py-2 text-xs rounded-md transition-colors
+                   {{ request()->routeIs('admin.master-data.doctors') ? 'text-blue-600 bg-blue-50 font-medium' : 'text-slate-500 hover:text-blue-600 hover:bg-blue-50' }}">
                     Data Dokter
                 </a>
-                <a href="{{ route('master-data.patients') }}" class="block px-3 py-2 text-xs rounded-md transition-colors
-                   {{ request()->routeIs('master-data.patients') ? 'text-blue-600 bg-blue-50 font-medium' : 'text-slate-500 hover:text-blue-600 hover:bg-blue-50' }}">
+                <a href="{{ route('admin.master-data.patients') }}" class="block px-3 py-2 text-xs rounded-md transition-colors
+                   {{ request()->routeIs('admin.master-data.patients') ? 'text-blue-600 bg-blue-50 font-medium' : 'text-slate-500 hover:text-blue-600 hover:bg-blue-50' }}">
                     Data Pasien
                 </a>
-                <a href="{{ route('master-data.polyclinics') }}" class="block px-3 py-2 text-xs rounded-md transition-colors
-                   {{ request()->routeIs('master-data.polyclinics') ? 'text-blue-600 bg-blue-50 font-medium' : 'text-slate-500 hover:text-blue-600 hover:bg-blue-50' }}">
+                <a href="{{ route('admin.master-data.polyclinics') }}" class="block px-3 py-2 text-xs rounded-md transition-colors
+                   {{ request()->routeIs('admin.master-data.polyclinics') ? 'text-blue-600 bg-blue-50 font-medium' : 'text-slate-500 hover:text-blue-600 hover:bg-blue-50' }}">
                     Data Poliklinik
                 </a>
             </div>
         </div>
 
-        <a href="{{ route('operational.queue') }}"
+        <a href="{{ route('admin.operational.queue') }}"
            class="group flex items-center gap-3 px-3 py-2.5 rounded-lg transition-all duration-150
-                  {{ request()->routeIs('operational.*') ? 'bg-blue-600 text-white shadow-sm' : 'text-slate-600 hover:bg-blue-50 hover:text-blue-600' }}">
+                  {{ request()->routeIs('admin.operational.*') ? 'bg-blue-600 text-white shadow-sm' : 'text-slate-600 hover:bg-blue-50 hover:text-blue-600' }}">
             <svg class="w-5 h-5 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8">
                 <path stroke-linecap="round" stroke-linejoin="round" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
             </svg>

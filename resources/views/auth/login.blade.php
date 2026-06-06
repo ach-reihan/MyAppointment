@@ -10,16 +10,13 @@
 
     <div class="w-full max-w-md p-6">
         
-        {{-- Header Logo --}}
         <div class="text-center mb-8">
             <h1 class="text-3xl font-bold text-blue-600 mb-2">My Appointement</h1>
             <p class="text-gray-500 font-medium text-lg">Selamat Datang</p>
         </div>
 
-        {{-- Form Card --}}
         <div class="bg-white rounded-3xl shadow-xl shadow-gray-200/50 p-8 border border-gray-100 relative overflow-hidden">
             
-            {{-- Alert Messages --}}
             @if(session('success'))
                 <div class="mb-6 bg-emerald-50 text-emerald-600 p-4 rounded-xl text-sm font-medium border border-emerald-100">
                     {{ session('success') }}

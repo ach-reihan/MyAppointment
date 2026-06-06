@@ -64,11 +64,11 @@ class AuthController
         }
 
         if ($userRole === 'admin') {
-            return redirect()->route('dashboard')->with('success', 'Selamat datang kembali, Admin!');
+            return redirect()->route('admin.dashboard')->with('success', 'Selamat datang kembali, Admin!');
         } elseif ($userRole === 'dokter') {
             return redirect()->route('doctor.dashboard')->with('success', 'Selamat bertugas, Dokter!');
         } elseif ($userRole === 'pasien') {
-            return redirect()->route('patient.dashboard')->with('success', 'Selamat datang di Healthink!');
+            return redirect()->route('patient.dashboard')->with('success', 'Selamat datang di My Appointment!');
         }
 
         return back()->with('error', 'Kredensial tidak valid. Akun tidak ditemukan.');
@@ -79,12 +79,4 @@ class AuthController
         return redirect()->route('login')->with('success', 'Pendaftaran berhasil! Silakan masuk dengan akun baru Anda.');
     }
 
-    public function logout(Request $request)
-    {
-        Auth::logout();
-        $request->session()->invalidate();
-        $request->session()->regenerateToken();
-
-        return redirect()->route('landing'); 
-    }
 }

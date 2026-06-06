@@ -17,16 +17,16 @@
         </div>
 
         <div class="flex flex-wrap gap-2 mb-6 bg-slate-100 p-1.5 rounded-xl w-max border border-slate-200/60">
-            <a href="{{ route('master-data.users') }}" class="px-4 py-2 text-xs font-semibold rounded-lg text-slate-600 hover:text-slate-900 transition-colors">
+            <a href="{{ route('admin.master-data.users') }}" class="px-4 py-2 text-xs font-semibold rounded-lg text-slate-600 hover:text-slate-900 transition-colors">
                 Manajemen User
             </a>
-            <a href="{{ route('master-data.doctors') }}" class="px-4 py-2 text-xs font-semibold rounded-lg text-slate-600 hover:text-slate-900 transition-colors">
+            <a href="{{ route('admin.master-data.doctors') }}" class="px-4 py-2 text-xs font-semibold rounded-lg text-slate-600 hover:text-slate-900 transition-colors">
                 Data Dokter
             </a>
-            <a href="{{ route('master-data.patients') }}" class="px-4 py-2 text-xs font-semibold rounded-lg bg-white text-blue-600 shadow-sm transition-all">
+            <a href="{{ route('admin.master-data.patients') }}" class="px-4 py-2 text-xs font-semibold rounded-lg bg-white text-blue-600 shadow-sm transition-all">
                 Data Pasien
             </a>
-            <a href="{{ route('master-data.polyclinics') }}" class="px-4 py-2 text-xs font-semibold rounded-lg text-slate-600 hover:text-slate-900 transition-colors">
+            <a href="{{ route('admin.master-data.polyclinics') }}" class="px-4 py-2 text-xs font-semibold rounded-lg text-slate-600 hover:text-slate-900 transition-colors">
                 Data Poliklinik
             </a>
         </div>
