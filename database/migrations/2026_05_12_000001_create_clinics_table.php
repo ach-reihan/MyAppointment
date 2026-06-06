@@ -14,8 +14,6 @@ return new class extends Migration
         Schema::create('clinics', function (Blueprint $table) {
             $table->ulid('id')->primary();
             $table->string('name');
-            $table->time('opens_at')->default('08:00:00');
-            $table->time('closes_at')->default('16:00:00');
             $table->text('description')->nullable();
             $table->timestamps();
         });
