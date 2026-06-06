@@ -20,6 +20,12 @@
             <form action="{{ route('register.process') }}" method="POST" class="space-y-8">
                 @csrf
                 
+                @if ($errors->any())
+                    <div class="mb-6 bg-red-50 text-red-600 p-4 rounded-xl text-sm font-medium border border-red-100">
+                        Pendaftaran gagal. Silakan periksa kembali data yang Anda masukkan.
+                    </div>
+                @endif
+
                 <div>
                     <h2 class="flex items-center gap-2 text-sm font-bold text-blue-600 mb-5 pb-2 border-b border-gray-100">
                         <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5.121 17.804A13.937 13.937 0 0112 16c2.5 0 4.847.655 6.879 1.804M15 10a3 3 0 11-6 0 3 3 0 016 0zm6 2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
@@ -27,20 +33,34 @@
                     </h2>
                     
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
-                        <div class="md:col-span-2">
-                            <label class="block text-[11px] font-bold text-gray-500 uppercase tracking-wider mb-2">Email atau Username</label>
-                            <input type="text" required placeholder="Masukkan email atau username" 
-                                class="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl text-sm focus:bg-white focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 outline-none transition-all">
+                        <div>
+                            <label class="block text-[11px] font-bold text-gray-500 uppercase tracking-wider mb-2">Alamat Email</label>
+                            <input type="email" name="email" required placeholder="nama@email.com" value="{{ old('email') }}"
+                                class="w-full px-4 py-3 bg-gray-50 border @error('email') border-red-300 focus:ring-red-500/20 focus:border-red-500 @else border-gray-200 focus:ring-blue-500/20 focus:border-blue-500 @enderror rounded-xl text-sm outline-none transition-all">
+                            @error('email')
+                                <p class="text-red-500 text-xs mt-1 font-semibold">{{ $message }}</p>
+                            @enderror
+                        </div>
+                        <div>
+                            <label class="block text-[11px] font-bold text-gray-500 uppercase tracking-wider mb-2">Username</label>
+                            <input type="text" name="username" required placeholder="username_anda" value="{{ old('username') }}"
+                                class="w-full px-4 py-3 bg-gray-50 border @error('username') border-red-300 focus:ring-red-500/20 focus:border-red-500 @else border-gray-200 focus:ring-blue-500/20 focus:border-blue-500 @enderror rounded-xl text-sm outline-none transition-all">
+                            @error('username')
+                                <p class="text-red-500 text-xs mt-1 font-semibold">{{ $message }}</p>
+                            @enderror
                         </div>
                         <div>
                             <label class="block text-[11px] font-bold text-gray-500 uppercase tracking-wider mb-2">Kata Sandi</label>
-                            <input type="password" required placeholder="********" 
-                                class="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl text-sm focus:bg-white focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 outline-none transition-all">
+                            <input type="password" name="password" required placeholder="********" 
+                                class="w-full px-4 py-3 bg-gray-50 border @error('password') border-red-300 focus:ring-red-500/20 focus:border-red-500 @else border-gray-200 focus:ring-blue-500/20 focus:border-blue-500 @enderror rounded-xl text-sm outline-none transition-all">
+                            @error('password')
+                                <p class="text-red-500 text-xs mt-1 font-semibold">{{ $message }}</p>
+                            @enderror
                         </div>
                         <div>
                             <label class="block text-[11px] font-bold text-gray-500 uppercase tracking-wider mb-2">Konfirmasi Sandi</label>
-                            <input type="password" required placeholder="********" 
-                                class="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl text-sm focus:bg-white focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 outline-none transition-all">
+                            <input type="password" name="password_confirmation" required placeholder="********" 
+                                class="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl text-sm focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 outline-none transition-all">
                         </div>
                     </div>
                 </div>
@@ -54,23 +74,35 @@
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
                         <div class="md:col-span-2">
                             <label class="block text-[11px] font-bold text-gray-500 uppercase tracking-wider mb-2">Nama Lengkap</label>
-                            <input type="text" required placeholder="Sesuai KTP" 
-                                class="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl text-sm focus:bg-white focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 outline-none transition-all">
+                            <input type="text" name="name" required placeholder="Sesuai KTP" value="{{ old('name') }}"
+                                class="w-full px-4 py-3 bg-gray-50 border @error('name') border-red-300 focus:ring-red-500/20 focus:border-red-500 @else border-gray-200 focus:ring-blue-500/20 focus:border-blue-500 @enderror rounded-xl text-sm outline-none transition-all">
+                            @error('name')
+                                <p class="text-red-500 text-xs mt-1 font-semibold">{{ $message }}</p>
+                            @enderror
                         </div>
                         <div>
                             <label class="block text-[11px] font-bold text-gray-500 uppercase tracking-wider mb-2">Nomor Telepon</label>
-                            <input type="tel" required placeholder="08xx xxxx xxxx" 
-                                class="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl text-sm focus:bg-white focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 outline-none transition-all">
+                            <input type="tel" name="phone_number" required placeholder="08xx xxxx xxxx" value="{{ old('phone_number') }}"
+                                class="w-full px-4 py-3 bg-gray-50 border @error('phone_number') border-red-300 focus:ring-red-500/20 focus:border-red-500 @else border-gray-200 focus:ring-blue-500/20 focus:border-blue-500 @enderror rounded-xl text-sm outline-none transition-all">
+                            @error('phone_number')
+                                <p class="text-red-500 text-xs mt-1 font-semibold">{{ $message }}</p>
+                            @enderror
                         </div>
                         <div>
                             <label class="block text-[11px] font-bold text-gray-500 uppercase tracking-wider mb-2">Tanggal Lahir</label>
-                            <input type="date" required 
-                                class="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl text-sm text-gray-700 focus:bg-white focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 outline-none transition-all">
+                            <input type="date" name="date_of_birth" required value="{{ old('date_of_birth') }}"
+                                class="w-full px-4 py-3 bg-gray-50 border @error('date_of_birth') border-red-300 focus:ring-red-500/20 focus:border-red-500 @else border-gray-200 focus:ring-blue-500/20 focus:border-blue-500 @enderror rounded-xl text-sm text-gray-700 outline-none transition-all">
+                            @error('date_of_birth')
+                                <p class="text-red-500 text-xs mt-1 font-semibold">{{ $message }}</p>
+                            @enderror
                         </div>
                         <div class="md:col-span-2">
                             <label class="block text-[11px] font-bold text-gray-500 uppercase tracking-wider mb-2">Alamat Domisili</label>
-                            <textarea required rows="3" placeholder="Tuliskan alamat lengkap..." 
-                                class="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl text-sm focus:bg-white focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 outline-none transition-all resize-none"></textarea>
+                            <textarea name="address" required rows="3" placeholder="Tuliskan alamat lengkap..." 
+                                class="w-full px-4 py-3 bg-gray-50 border @error('address') border-red-300 focus:ring-red-500/20 focus:border-red-500 @else border-gray-200 focus:ring-blue-500/20 focus:border-blue-500 @enderror rounded-xl text-sm outline-none transition-all resize-none">{{ old('address') }}</textarea>
+                            @error('address')
+                                <p class="text-red-500 text-xs mt-1 font-semibold">{{ $message }}</p>
+                            @enderror
                         </div>
                     </div>
                 </div>
