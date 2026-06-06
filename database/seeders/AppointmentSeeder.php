@@ -3,11 +3,11 @@
 namespace Database\Seeders;
 
 use App\Models\Appointment;
+use App\Models\Clinic;
 use App\Models\Doctor;
 use App\Models\Patient;
-use App\Models\Clinic;
+use Illuminate\Database\Eloquent\Factories\Sequence;
 use Illuminate\Database\Seeder;
-use Faker\Factory as Faker;
 
 class AppointmentSeeder extends Seeder
 {
@@ -16,25 +16,24 @@ class AppointmentSeeder extends Seeder
      */
     public function run(): void
     {
-        $faker = Faker::create('id_ID');
-        $patients = Patient::query()->get();
-        $doctors = Doctor::query()->get();
-        $clinics = Clinic::query()->pluck('id')->all();
-        $statuses = ['pending', 'approved', 'completed', 'cancelled'];
+        $patients = Patient::all();
+        $doctors = Doctor::all();
+        $clinics = Clinic::all();
 
-        for ($i = 0; $i < 20; $i++) {
-            $patient = $faker->randomElement($patients);
-            $doctor = $faker->randomElement($doctors);
-            $clinicId = $faker->randomElement($clinics);
-            $status = ($i < 10) ? 'completed' : $faker->randomElement($statuses);
-
-            Appointment::factory()->create([
-                'patient_id' => $patient->id,
-                'doctor_id' => $doctor->id,
-                'clinic_id' => $clinicId,
-                'appointment_datetime' => $faker->dateTimeBetween('-1 month', '+1 month'),
-                'status' => $status,
-            ]);
+        if ($patients->isEmpty() || $doctors->isEmpty() || $clinics->isEmpty()) {
+            return;
         }
+
+        Appointment::factory()
+            ->count(20)
+            ->recycle($patients)
+            ->recycle($doctors)
+            ->recycle($clinics)
+            ->sequence(fn (Sequence $sequence) => [
+                'status' => $sequence->index < 10 
+                    ? 'completed' 
+                    : fake()->randomElement(['pending', 'approved', 'completed', 'cancelled']),
+            ])
+            ->create();
     }
 }
