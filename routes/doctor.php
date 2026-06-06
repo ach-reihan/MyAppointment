@@ -1,27 +1,12 @@
 <?php
-
+use App\Http\Controllers\Doctor\ExaminationController;
+use App\Http\Controllers\Doctor\DashboardController;
 use Illuminate\Support\Facades\Route;
 
-Route::prefix('doctor')->name('doctor.')->group(function () {
-    
-    // URL: /doctor | Nama Rute: doctor.dashboard
-    Route::get('/', function () {
-        return view('doctor.DashboardDoctor');
-    })->name('dashboard');
+Route::get('/doctor', [DashboardController::class, 'index'])->name('DashboardDoctor');
 
-    // URL: /doctor/examination/index | Nama Rute: doctor.examination.Index
-    Route::get('/examination/index', function () {
-        return view('doctor.examination.Index');
-    })->name('examination.Index'); 
+Route::get('/examination', [ExaminationController::class, 'index'])->name('examination.Index');
 
-    // URL: /doctor/examination/{id} | Nama Rute: doctor.examination.Show
-    Route::get('/examination/{id}', function ($id) {
-        return view('doctor.examination.Show', ['id' => $id]);
-    })->name('examination.Show');
+Route::get('/examination/{id}', [ExaminationController::class, 'show'])->name('examination.Show');
 
-    // URL: /doctor/examination/{id}/detail | Nama Rute: doctor.examination.Detail
-    Route::get('/examination/{id}/detail', function ($id) {
-        return view('doctor.examination.Detail', ['id' => $id]);
-    })->name('examination.Detail');
-
-});
+Route::get('/examination/{id}/detail', [ExaminationController::class, 'detail'])->name('examination.Detail');
