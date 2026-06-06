@@ -43,7 +43,7 @@
             </main>
 
             <footer class="px-6 py-3 bg-white border-t border-slate-100 flex items-center justify-between text-xs text-slate-400">
-                <span>© 2024 Healthink Medical Solutions. Seluruh hak cipta dilindungi.</span>
+                <span>© 2026 My Appointment Medical Solutions. Seluruh hak cipta dilindungi.</span>
                 <div class="flex gap-4">
                     <a href="#" class="hover:text-blue-600 transition-colors">Pusat Bantuan</a>
                     <a href="#" class="hover:text-blue-600 transition-colors">Syarat & Ketentuan</a>

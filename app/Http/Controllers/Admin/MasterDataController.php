@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers\Admin;
 
-use App\Services\MasterDataService;
+use App\Services\Admin\MasterDataService;
 use Illuminate\View\View;
 
 class MasterDataController

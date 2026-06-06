@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers\Admin;
 
-use App\Services\OperationalService;
+use App\Services\Admin\OperationalService;
 use Illuminate\View\View;
 
 class OperationalController 

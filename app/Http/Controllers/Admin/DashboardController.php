@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers\Admin;
 
-use App\Services\DashboardService;
+use App\Services\Admin\DashboardService;
 use Illuminate\View\View;
 
 class DashboardController 
