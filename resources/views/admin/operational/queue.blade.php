@@ -233,7 +233,6 @@
         </div>
         
         @include('admin.operational.partials.queue-form')
-        @include('admin.operational.partials.history-sidebar')
 
     </div>
 </x-app-layout>

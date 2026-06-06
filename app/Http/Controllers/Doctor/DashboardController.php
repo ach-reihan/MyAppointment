@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Doctor;
 
 use Illuminate\Http\Request;
+use Illuminate\View\View;
 use App\Services\Doctor\ExaminationServices; 
 
 class DashboardController

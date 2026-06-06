@@ -21,9 +21,9 @@
                 >
                     <option value="" disabled selected>Pilih Spesialisasi</option>
                     <option value="Umum">Umum</option>
-                    <option value="Penyakit Dalam">Penyakit Dalam</option>
+                    <option value="Penyakit Dalam">Ortodentis</option>
                     <option value="Spesialis Anak">Spesialis Anak</option>
-                    <option value="Bedah">Bedah</option>
+                    <option value="Bedah">Kardiolog</option>
                 </select>
                 <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-3.5 text-slate-400">
                     <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">

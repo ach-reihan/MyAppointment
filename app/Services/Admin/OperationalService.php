@@ -2,6 +2,10 @@
 
 namespace App\Services\Admin;
 
+use App\Models\Appointment;
+use App\Models\MedicalRecord;
+use Carbon\Carbon;
+
 class OperationalService
 {
     /**
@@ -9,11 +13,25 @@ class OperationalService
      */
     public function getQueueStats(): array
     {
+        $today = Carbon::today();
+        $appointments = Appointment::whereDate('appointment_datetime', $today)->get();
+
+        $total = $appointments->count();
+        $menunggu = $appointments->where('status', 'pending')->count();
+        $proses = $appointments->where('status', 'approved')->count();
+        $selesai = $appointments->where('status', 'completed')->count();
+
+        // Hitung perbandingan persentase dengan hari kemarin
+        $yesterdayCount = Appointment::whereDate('appointment_datetime', Carbon::yesterday())->count();
+        $diff = $total - $yesterdayCount;
+        $percent = $yesterdayCount > 0 ? round(($diff / $yesterdayCount) * 100) : ($total > 0 ? 100 : 0);
+        $sign = $percent > 0 ? '+' : '';
+
         return [
-            ['label' => 'Total Janji Temu', 'value' => '48', 'desc' => '+12% dari kemarin',     'color' => 'blue'],
-            ['label' => 'Menunggu',         'value' => '12', 'desc' => 'Pasien di ruang tunggu', 'color' => 'amber'],
-            ['label' => 'Dalam Proses',     'value' => '6',  'desc' => 'Sedang pemeriksaan',     'color' => 'indigo'],
-            ['label' => 'Selesai',          'value' => '30', 'desc' => 'Pasien terlayani',       'color' => 'emerald'],
+            ['label' => 'Total Janji Temu', 'value' => $total, 'desc' => "{$sign}{$percent}% dari kemarin", 'color' => 'blue'],
+            ['label' => 'Menunggu',         'value' => $menunggu, 'desc' => 'Pasien di ruang tunggu', 'color' => 'amber'],
+            ['label' => 'Dalam Proses',     'value' => $proses,  'desc' => 'Sedang pemeriksaan',     'color' => 'indigo'],
+            ['label' => 'Selesai',          'value' => $selesai, 'desc' => 'Pasien terlayani',       'color' => 'emerald'],
         ];
     }
 
@@ -22,53 +40,70 @@ class OperationalService
      */
     public function getTodayQueue(): array
     {
-        return [
-            [
-                'id' => '#PX-2023001', 'nama' => 'Budi Pratama', 'dokter' => 'Dr. Sarah Wijaya', 'poli' => 'Poli Umum',
-                'waktu' => '14 Okt 2023, 08:00', 'status' => 'Menunggu', 'color' => 'amber', 'initial' => 'BP'
-            ],
-            [
-                'id' => '#PX-2023005', 'nama' => 'Ani Nuraini',  'dokter' => 'Dr. Bambang S.',   'poli' => 'Poli Gigi',
-                'waktu' => '14 Okt 2023, 09:45', 'status' => 'Proses',   'color' => 'blue',  'initial' => 'AN'
-            ],
-            [
-                'id' => '#PX-2023012', 'nama' => 'Dedi Kusuma',  'dokter' => 'Dr. Sarah Wijaya', 'poli' => 'Poli Umum',
-                'waktu' => '14 Okt 2023, 08:15', 'status' => 'Selesai',  'color' => 'emerald','initial' => 'DK'
-            ],
-            [
-                'id' => '#PX-2023018', 'nama' => 'Siti Laila',   'dokter' => 'Dr. Bambang S.',   'poli' => 'Poli Gigi',
-                'waktu' => '14 Okt 2023, 10:30', 'status' => 'Menunggu', 'color' => 'amber', 'initial' => 'SL'
-            ],
-        ];
+        $today = Carbon::today();
+        
+        // Mengambil antrian hari ini beserta relasinya (Eager Loading)
+        $appointments = Appointment::with(['patient.user', 'doctor.user', 'clinic'])
+            ->whereDate('appointment_datetime', $today)
+            ->orderBy('appointment_datetime', 'asc')
+            ->get();
+
+        return $appointments->map(function ($appt) {
+            // Pemetaan status DB (Enum) ke format UI Anda
+            $statusMap = [
+                'pending'   => ['label' => 'Menunggu', 'color' => 'amber'],
+                'approved'  => ['label' => 'Proses',   'color' => 'blue'],
+                'completed' => ['label' => 'Selesai',  'color' => 'emerald'],
+                'cancelled' => ['label' => 'Batal',    'color' => 'slate'],
+            ];
+
+            $statusData = $statusMap[$appt->status] ?? $statusMap['pending'];
+
+            // Mengambil nama dari tabel relasi
+            $patientName = $appt->patient->user->name ?? 'Pasien Anonim';
+            $doctorName = $appt->doctor->user->name ?? 'Dokter Anonim';
+            $poliName = $appt->clinic->name ?? 'Poli Umum';
+
+            // Membuat inisial nama untuk avatar bundar
+            $words = explode(' ', $patientName);
+            $initial = '';
+            if (isset($words[0])) $initial .= strtoupper(substr($words[0], 0, 1));
+            if (isset($words[1])) $initial .= strtoupper(substr($words[1], 0, 1));
+
+            return [
+                // Frontend butuh ID singkat seperti #PX-2023, jadi kita ambil 8 karakter pertama ULID
+                'id'      => '#' . strtoupper(substr($appt->id, 0, 8)), 
+                'real_id' => $appt->id, // Disimpan untuk dikirim ke API saat aksi (Selesai/Hapus)
+                'nama'    => $patientName,
+                'dokter'  => $doctorName,
+                'poli'    => $poliName,
+                'waktu'   => Carbon::parse($appt->appointment_datetime)->translatedFormat('d M Y, H:i'),
+                'status'  => $statusData['label'],
+                'color'   => $statusData['color'],
+                'initial' => $initial ?: 'PX'
+            ];
+        })->toArray();
     }
 
     /**
-     * Data mock riwayat medis untuk ditampilkan di sidebar pop-up.
+     * Data riwayat medis terakhir (Global).
      */
     public function getMedicalHistory(): array
     {
-        return [
-            [
-                'tanggal'  => '02 Sept 2023',
-                'dokter'   => 'Dr. Sarah Wijaya',
-                'diagnosa' => 'Faringitis Akut (Radang Tenggorokan)',
-                'tindakan' => 'Pemberian antipiretik dan edukasi istirahat cukup.',
-                'resep'    => ['Amoxicillin 500mg (3x1)', 'Paracetamol 500mg (3x1)', 'Vitamin C 500mg (1x1)']
-            ],
-            [
-                'tanggal'  => '15 Jun 2023',
-                'dokter'   => 'Dr. Bambang S.',
-                'diagnosa' => 'Karies Dentis (Gigi Berlubang)',
-                'tindakan' => 'Penambalan gigi sementara.',
-                'resep'    => ['Asam Mefenamat 500mg (PRN)']
-            ],
-            [
-                'tanggal'  => '02 Jan 2023',
-                'dokter'   => 'Dr. Sarah Wijaya',
-                'diagnosa' => 'Check-up Rutin (Sehat)',
-                'tindakan' => 'Pemeriksaan fisik menyeluruh, tensi normal.',
-                'resep'    => []
-            ],
-        ];
+        $records = MedicalRecord::with(['doctor.user'])
+            ->orderBy('checkup_date', 'desc')
+            ->limit(5)
+            ->get();
+
+        return $records->map(function ($record) {
+            return [
+                'tanggal'  => Carbon::parse($record->checkup_date)->translatedFormat('d M Y'),
+                'dokter'   => $record->doctor->user->name ?? 'Tidak Diketahui',
+                'diagnosa' => $record->diagnoses,
+                'tindakan' => $record->action,
+                // Mengubah string resep menjadi array, memisahkan per baris/koma
+                'resep'    => array_filter(array_map('trim', explode("\n", str_replace(',', "\n", $record->prescription))))
+            ];
+        })->toArray();
     }
 }

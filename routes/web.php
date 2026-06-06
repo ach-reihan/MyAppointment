@@ -10,7 +10,7 @@ use App\Http\Controllers\Admin\MasterDataController;
 use App\Http\Controllers\Admin\OperationalController;
 
 use App\Http\Controllers\Doctor\DashboardController as DoctorDashboard;
-use App\Http\Controllers\Patient\DashboardController as PatientDashboard;
+use App\Http\Controllers\Doctor\ExaminationController;
 
 Route::get('/', [LandingController::class, 'index'])->name('landing');
 

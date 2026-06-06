@@ -66,7 +66,7 @@ class AuthController
         if ($userRole === 'admin') {
             return redirect()->route('admin.dashboard')->with('success', 'Selamat datang kembali, Admin!');
         } elseif ($userRole === 'dokter') {
-            return redirect()->route('doctor.dashboard')->with('success', 'Selamat bertugas, Dokter!');
+            return redirect()->route('DashboardDoctor')->with('success', 'Selamat bertugas, Dokter!');
         } elseif ($userRole === 'pasien') {
             return redirect()->route('patient.dashboard')->with('success', 'Selamat datang di My Appointment!');
         }
