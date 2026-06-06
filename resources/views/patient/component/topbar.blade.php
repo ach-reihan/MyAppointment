@@ -1,5 +1,5 @@
 <header class="topbar d-flex align-items-center justify-content-between">
-    <h6 class="mb-0 text-muted fw-normal">Hub Beranda Pasien</h6>
+    <h6 class="mb-0 fw-normal">Hub Beranda Pasien</h6>
     <div class="d-flex align-items-center gap-4">
         <div class="d-flex align-items-center gap-3 border-start ps-4">
             <div class="text-end">
