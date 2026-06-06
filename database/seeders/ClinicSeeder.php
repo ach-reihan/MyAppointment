@@ -17,8 +17,6 @@ class ClinicSeeder extends Seeder
         foreach ($clinicsData as $clinicName) {
             Clinic::create([
                 'name' => $clinicName,
-                'opens_at' => '08:00:00',
-                'closes_at' => '16:00:00',
                 'description' => 'Pelayanan khusus untuk ' . $clinicName,
             ]);
         }
