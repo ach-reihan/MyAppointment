@@ -18,6 +18,7 @@ Route::get('/login', [AuthController::class, 'showLogin'])->name('login');
 Route::get('/register', [AuthController::class, 'showRegister'])->name('register');
 
 Route::post('/login', [AuthController::class, 'processLogin'])->name('login.process');
+Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 Route::post('/register', [AuthController::class, 'processRegister'])->name('register.process');
 
 require __DIR__.'/admin.php';
