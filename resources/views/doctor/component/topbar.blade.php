@@ -1,24 +1,13 @@
 <header class="topbar d-flex align-items-center justify-content-between">
     <div class="d-flex align-items-center gap-3">
-        <button class="btn btn-link text-dark d-md-none"><i class="bi bi-list fs-4"></i></button>
-        <div class="position-relative">
-            <i class="bi bi-search position-absolute top-50 start-0 translate-middle-y ms-3 text-muted"></i>
-            <input type="text" class="form-control search-input ps-5 py-2" placeholder="Cari data pasien...">
-        </div>
+        Hub Beranda dokter  
     </div>
     
     <div class="d-flex align-items-center gap-4">
-        <div class="position-relative cursor-pointer text-muted">
-            <i class="bi bi-bell fs-5"></i>
-            <span class="position-absolute top-0 start-100 translate-middle p-1 bg-danger border border-light rounded-circle"></span>
-        </div>
-        <div class="text-muted">
-            <i class="bi bi-question-circle fs-5"></i>
-        </div>
         <div class="d-flex align-items-center gap-2 border-start ps-4">
             <div class="text-end d-none d-md-block">
-                <div class="fw-semibold text-dark" style="font-size: 0.9rem;">Dr. Healthink S.Ked, M.Ked</div>
-                <div class="text-muted" style="font-size: 0.75rem;">Spesialis Penyakit Dalam</div>
+                <div class="fw-semibold text-dark" style="font-size: 0.9rem;"><span class="fw-semibold">{{ $doctorName ?? 'Dr. Healthink S.Ked, M.Ked' }}</span></div>
+                <div class="text-muted" style="font-size: 0.75rem;">{{ $polyclinic ?? 'Poli Umum' }}</div>
             </div>
             <img src="https://ui-avatars.com/api/?name=Healthink&background=random" alt="Profile" class="rounded-circle" width="40" height="40">
         </div>
