@@ -91,13 +91,13 @@ class OperationalService
     public function getMedicalHistory(): array
     {
         $records = MedicalRecord::with(['doctor.user'])
-            ->orderBy('checkup_date', 'desc')
+            ->orderBy('checkup_at', 'desc')
             ->limit(5)
             ->get();
 
         return $records->map(function ($record) {
             return [
-                'tanggal'  => Carbon::parse($record->checkup_date)->translatedFormat('d M Y'),
+                'tanggal'  => Carbon::parse($record->checkup_at)->translatedFormat('d M Y'),
                 'dokter'   => $record->doctor->user->name ?? 'Tidak Diketahui',
                 'diagnosa' => $record->diagnoses,
                 'tindakan' => $record->action,
