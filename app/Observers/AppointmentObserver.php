@@ -3,7 +3,7 @@
 namespace App\Observers;
 
 use App\Models\Appointment;
-use App\Services\DashboardService;
+use App\Services\Admin\DashboardService;
 use App\Events\DashboardUpdated;
 
 class AppointmentObserver
