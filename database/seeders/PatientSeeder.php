@@ -4,6 +4,7 @@ namespace Database\Seeders;
 
 use App\Models\Patient;
 use App\Models\User;
+use Illuminate\Database\Eloquent\Factories\Sequence;
 use Illuminate\Database\Seeder;
 
 class PatientSeeder extends Seeder
@@ -13,17 +14,14 @@ class PatientSeeder extends Seeder
      */
     public function run(): void
     {
-        $faker = \Faker\Factory::create('id_ID');
-
-        $patientUsers = User::query()->where('role', 'patient')->get();
-
-        foreach ($patientUsers as $user) {
-            Patient::factory()->create([
-                'user_id' => $user->id,
-                'address' => $faker->address(),
-                'date_of_birth' => $faker->date('Y-m-d', '2010-01-01'),
-                'phone_number' => '08' . $faker->numerify('##########'),
-            ]);
-        }
+        Patient::factory()
+            ->count(20)
+            ->sequence(fn (Sequence $sequence) => [
+                'user_id' => User::factory()->patient()->state([
+                    'username' => 'patient' . ($sequence->index + 1),
+                    'email' => 'patient' . ($sequence->index + 1) . '@gmail.com',
+                ]),
+            ])
+            ->create();
     }
 }
