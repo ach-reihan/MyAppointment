@@ -4,7 +4,7 @@
             <i class="bi bi-shield-plus"></i>
         </div>
         <div>
-            <h5 class="mb-0 text-primary fw-bold" style="font-size: 1.1rem;">Healthink</h5>
+            <h5 class="mb-0 text-primary fw-bold" style="font-size: 1.1rem;">MyAppointment</h5>
             <small class="text-muted" style="font-size: 0.75rem;">Patient Portal</small>
         </div>
     </div>
@@ -21,7 +21,7 @@
         <a href="{{ route('FormAppointment') }}" 
            class="nav-link d-flex align-items-center gap-3 {{ request()->routeIs('FormAppointment') ? 'active' : 'text-muted' }}">
             <i class="bi bi-clipboard2-pulse"></i>
-            Buat Janji
+            Make Appointment
         </a>
     </li>
 </ul>
