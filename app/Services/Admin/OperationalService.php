@@ -106,4 +106,32 @@ class OperationalService
             ];
         })->toArray();
     }
+
+    /* -------------------------------------------------------------------------- */
+    /*                              MUTATION METHODS                              */
+    /* -------------------------------------------------------------------------- */
+
+    public function createQueue(array $data): Appointment
+    {
+        return Appointment::create([
+            'patient_id'           => $data['patient_id'],
+            'doctor_id'            => $data['doctor_id'],
+            'clinic_id'            => $data['clinic_id'],
+            'appointment_datetime' => $data['appointment_datetime'],
+            'status'               => $data['status'],
+            'complaint'            => $data['complaint'],
+        ]);
+    }
+
+    public function markQueueAsDone(string $id): Appointment
+    {
+        $appt = Appointment::findOrFail($id);
+        $appt->update(['status' => 'completed']);
+        return $appt;
+    }
+
+    public function deleteQueue(string $id): bool
+    {
+        return Appointment::findOrFail($id)->delete();
+    }
 }
