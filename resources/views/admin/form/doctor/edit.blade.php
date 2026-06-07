@@ -1,6 +1,4 @@
-<form :action="`/admin/master-data/doctors/${editingId}`" method="POST" class="p-6 space-y-4">
-    @csrf
-    @method('PUT')
+<form @submit.prevent="saveData()" class="p-6 space-y-4">
 
     <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
         <div>

@@ -78,7 +78,7 @@ class MasterDataController
     {
         $validated = $request->validate([
             'name'           => 'required|string',
-            'specialization' => 'required|string|in:Umum,Penyakit Dalam,Spesialis Anak,Bedah',
+            'specialization' => 'required|string|max:255',
             'clinics'        => 'nullable|array',
             'clinics.*'      => 'string',
         ]);
@@ -96,7 +96,7 @@ class MasterDataController
     {
         $validated = $request->validate([
             'name'           => 'required|string',
-            'specialization' => 'required|string|in:Umum,Penyakit Dalam,Spesialis Anak,Bedah',
+            'specialization' => 'required|string|max:255',
             'clinics'        => 'nullable|array',
             'clinics.*'      => 'string',
         ]);

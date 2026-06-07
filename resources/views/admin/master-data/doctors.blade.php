@@ -26,9 +26,10 @@
         },
 
         async saveData() {
+            const baseUrl = '{{ url('/admin/master-data/doctors') }}';
             const url = this.isEdit 
-                ? `/admin/master-data/doctors/${this.editingId}` 
-                : '/admin/master-data/doctors';
+                ? `${baseUrl}/${this.editingId}` 
+                : baseUrl;
             
             const method = this.isEdit ? 'PUT' : 'POST';
             
@@ -49,17 +50,22 @@
                     body: JSON.stringify(payload)
                 });
                 
+                if (!response.ok) {
+                    const errorText = await response.text(); 
+                    console.error('SERVER ERROR:', errorText);
+                    alert('Gagal menyimpan! Buka Inspect -> Console untuk melihat detail error aslinya.');
+                    return;
+                }
+
                 const result = await response.json();
-                if (response.ok && result.success) {
+                if (result.success) {
                     window.location.reload();
                 } else {
-                    const message = result.message || 'Terjadi kesalahan saat menyimpan data.';
-                    const errors = result.errors ? Object.values(result.errors).flat().join('\n') : '';
-                    alert(message + (errors ? '\n\n' + errors : ''));
+                    alert(result.message || 'Terjadi kesalahan validasi.');
                 }
             } catch (error) {
-                console.error(error);
-                alert('Gagal menghubungi server.');
+                console.error('NETWORK ERROR:', error);
+                alert('Gagal menghubungi server: ' + error.message);
             }
         },
 
@@ -71,7 +77,9 @@
         async confirmDelete() {
             this.openDeleteModal = false;
             try {
-                const response = await fetch(`/admin/master-data/doctors/${this.deletingId}`, {
+                const baseUrl = '{{ url('/admin/master-data/doctors') }}';
+                
+                const response = await fetch(`${baseUrl}/${this.deletingId}`, {
                     method: 'DELETE',
                     headers: {
                         'Content-Type': 'application/json',
@@ -80,15 +88,22 @@
                     }
                 });
                 
+                if (!response.ok) {
+                    const errorText = await response.text(); 
+                    console.error('SERVER ERROR:', errorText);
+                    alert('Gagal menghapus! Buka Inspect -> Console untuk melihat detail error aslinya.');
+                    return;
+                }
+                
                 const result = await response.json();
-                if (response.ok && result.success) {
+                if (result.success) {
                     window.location.reload();
                 } else {
-                    alert(result.message || 'Gagal menghapus dokter.');
+                    alert(result.message || 'Gagal menghapus data.');
                 }
             } catch (error) {
-                console.error(error);
-                alert('Gagal menghubungi server.');
+                console.error('NETWORK ERROR:', error);
+                alert('Gagal menghubungi server: ' + error.message);
             }
         }
     }"

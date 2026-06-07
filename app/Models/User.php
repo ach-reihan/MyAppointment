@@ -18,7 +18,7 @@ class User extends Authenticatable
 {
     use HasUlids, HasFactory, Notifiable;
     
-    protected $guarded = [];
+    //protected $guarded = [];
 
 
     public function doctor(): HasOne
