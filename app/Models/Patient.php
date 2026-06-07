@@ -15,6 +15,13 @@ class Patient extends Model
 
     protected $guarded = [];
 
+    protected function casts(): array
+    {
+        return [
+            'date_of_birth' => 'date',
+        ];
+    }
+
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);
