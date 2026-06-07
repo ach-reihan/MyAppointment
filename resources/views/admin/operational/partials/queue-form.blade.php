@@ -92,7 +92,7 @@
                         <select x-model="formQueue.status" required
                             class="w-full px-3.5 py-2 text-sm bg-slate-50 border border-slate-200 rounded-lg text-slate-800 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 appearance-none transition-all">
                             <option value="pending">Menunggu</option>
-                            <option value="approved">Proses</option>
+                            <option value="approved">Dalam Proses</option>
                             <option value="completed">Selesai</option>
                         </select>
                         <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-3.5 text-slate-400">
