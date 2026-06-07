@@ -1,22 +1,13 @@
 <form @submit.prevent="saveData()" class="p-6 space-y-4">
     <div>
         <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1.5">Nama Poliklinik</label>
-        <div class="relative">
-            <select x-model="namaPoli" required
-                class="w-full px-3.5 py-2 text-sm bg-slate-50 border border-slate-200 rounded-lg text-slate-800 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 appearance-none transition-all">
-                <option value="" disabled selected>Pilih Nama Poliklinik</option>
-                <option value="Poli Umum">Poli Umum</option>
-                <option value="Poli Anak">Poli Anak</option>
-                <option value="Poli Jantung">Poli Jantung</option>
-                <option value="Poli Gigi">Poli Gigi</option>
-                <option value="VIP">VIP</option>
-            </select>
-            <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-3.5 text-slate-400">
-                <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                    <path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7" />
-                </svg>
-            </div>
-        </div>
+        <input 
+            type="text" 
+            x-model="namaPoli"
+            placeholder="Contoh: Poli Mata"
+            required
+            class="w-full px-3.5 py-2 text-sm bg-slate-50 border border-slate-200 rounded-lg text-slate-800 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all"
+        >
     </div>
 
     <div>

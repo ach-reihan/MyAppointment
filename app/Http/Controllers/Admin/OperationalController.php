@@ -37,9 +37,11 @@ class OperationalController
             'patient_id'           => 'required|string|exists:patients,id',
             'doctor_id'            => 'required|string|exists:doctors,id',
             'clinic_id'            => 'required|string|exists:clinics,id',
-            'appointment_datetime' => 'required|string',
+            'appointment_datetime' => 'required|date|after_or_equal:now',
             'status'               => 'required|string|in:pending,approved,completed,cancelled',
             'complaint'            => 'required|string',
+        ], [
+            'appointment_datetime.after_or_equal' => 'Jadwal antrian tidak boleh menggunakan waktu yang sudah lewat.',
         ]);
 
         $this->operationalService->createQueue($validated);
