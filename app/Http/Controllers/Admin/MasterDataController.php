@@ -54,6 +54,13 @@ class MasterDataController
 
     public function destroyUser(string $id): JsonResponse
     {
+        if (strcasecmp($id, auth()->id()) === 0) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Anda tidak dapat menghapus akun Anda sendiri.'
+            ], 400);
+        }
+
         $this->masterDataService->deleteUser($id);
         return response()->json(['success' => true]);
     }
