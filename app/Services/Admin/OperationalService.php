@@ -51,10 +51,10 @@ class OperationalService
         return $appointments->map(function ($appt) {
             // Pemetaan status DB (Enum) ke format UI Anda
             $statusMap = [
-                'pending'   => ['label' => 'Menunggu', 'color' => 'amber'],
-                'approved'  => ['label' => 'Proses',   'color' => 'blue'],
-                'completed' => ['label' => 'Selesai',  'color' => 'emerald'],
-                'cancelled' => ['label' => 'Batal',    'color' => 'slate'],
+                'pending'   => ['label' => 'Menunggu',     'color' => 'amber'],
+                'approved'  => ['label' => 'Dalam Proses', 'color' => 'indigo'],
+                'completed' => ['label' => 'Selesai',      'color' => 'emerald'],
+                'cancelled' => ['label' => 'Batal',        'color' => 'slate'],
             ];
 
             $statusData = $statusMap[$appt->status] ?? $statusMap['pending'];
