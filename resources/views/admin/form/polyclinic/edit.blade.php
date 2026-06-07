@@ -1,4 +1,4 @@
-<form @submit.prevent="alert('Data Poliklinik Berhasil Diperbarui!'); openModal = false;" class="p-6 space-y-4">
+<form @submit.prevent="saveData()" class="p-6 space-y-4">
     
     <div>
         <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1.5">Nama Poliklinik</label>
