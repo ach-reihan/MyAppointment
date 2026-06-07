@@ -42,7 +42,7 @@ class MedicalRecordFactory extends Factory
             'patient_id' => Patient::factory(),
             'doctor_id' => Doctor::factory(),
             'appointment_id' => Appointment::factory(),
-            'checkup_at' => $faker->dateTimeBetween('-1 month', '+1 month'),
+            'checkup_date' => $faker->dateTimeBetween('-1 month', '+1 month'),
             'diagnoses' => $faker->randomElement($diagnoses),
             'action' => 'Memberikan perawatan ringan, istirahat, dan observasi lanjutan',
             'prescription' => $faker->randomElement($prescriptions),
