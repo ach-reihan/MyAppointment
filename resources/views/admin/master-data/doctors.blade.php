@@ -4,10 +4,96 @@
         openModal: false, 
         isEdit: false,
         modalTitle: 'Tambah Data Dokter',
+        editingId: '',
         namaDokter: '',
         spesialisasi: '',
-        poliTugasan: [] // Array untuk menampung multiple checkbox
-    }">
+        poliTugasan: [], // Array untuk menampung multiple checkbox
+
+        // Data & Pencarian
+        searchQuery: '',
+        doctorList: {{ json_encode($doctors) }},
+        openDeleteModal: false,
+        deletingId: '',
+
+        get filteredDoctors() {
+            if (this.searchQuery === '') return this.doctorList;
+            const term = this.searchQuery.toLowerCase();
+            return this.doctorList.filter(doc => {
+                return doc.nama.toLowerCase().includes(term) || 
+                       doc.spesialisasi.toLowerCase().includes(term) ||
+                       doc.id.toLowerCase().includes(term);
+            });
+        },
+
+        async saveData() {
+            const url = this.isEdit 
+                ? `/admin/master-data/doctors/${this.editingId}` 
+                : '/admin/master-data/doctors';
+            
+            const method = this.isEdit ? 'PUT' : 'POST';
+            
+            const payload = {
+                name: this.namaDokter,
+                specialization: this.spesialisasi,
+                clinics: this.poliTugasan
+            };
+            
+            try {
+                const response = await fetch(url, {
+                    method: method,
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                        'Accept': 'application/json'
+                    },
+                    body: JSON.stringify(payload)
+                });
+                
+                const result = await response.json();
+                if (response.ok && result.success) {
+                    window.location.reload();
+                } else {
+                    const message = result.message || 'Terjadi kesalahan saat menyimpan data.';
+                    const errors = result.errors ? Object.values(result.errors).flat().join('\n') : '';
+                    alert(message + (errors ? '\n\n' + errors : ''));
+                }
+            } catch (error) {
+                console.error(error);
+                alert('Gagal menghubungi server.');
+            }
+        },
+
+        triggerDelete(id) {
+            this.deletingId = id;
+            this.openDeleteModal = true;
+        },
+
+        async confirmDelete() {
+            this.openDeleteModal = false;
+            try {
+                const response = await fetch(`/admin/master-data/doctors/${this.deletingId}`, {
+                    method: 'DELETE',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                        'Accept': 'application/json'
+                    }
+                });
+                
+                const result = await response.json();
+                if (response.ok && result.success) {
+                    window.location.reload();
+                } else {
+                    alert(result.message || 'Gagal menghapus dokter.');
+                }
+            } catch (error) {
+                console.error(error);
+                alert('Gagal menghubungi server.');
+            }
+        }
+    }"
+    @global-search.window="searchQuery = $event.detail"
+    >
 
         <div class="mb-6">
             <h1 class="text-xl font-bold text-slate-800 tracking-tight">Master Data Management</h1>
@@ -36,7 +122,7 @@
                     <p class="text-xs text-slate-400 mt-0.5">Total terdapat {{ count($doctors) }} dokter terdaftar</p>
                 </div>
                 <button 
-                    @click="openModal = true; isEdit = false; modalTitle = 'Tambah Data Dokter'; namaDokter = ''; spesialisasi = ''; poliTugasan = []" 
+                    @click="openModal = true; isEdit = false; modalTitle = 'Tambah Data Dokter'; editingId = ''; namaDokter = ''; spesialisasi = ''; poliTugasan = []" 
                     class="inline-flex items-center gap-2 px-4 py-2.5 bg-blue-600 text-white rounded-xl text-xs font-semibold hover:bg-blue-700 transition-colors shadow-sm"
                 >
                     <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
@@ -58,54 +144,58 @@
                         </tr>
                     </thead>
                     <tbody class="divide-y divide-slate-100">
-                        @foreach($doctors as $doctor)
-                        <tr class="hover:bg-slate-50/50 transition-colors">
-                            <td class="px-6 py-4 text-xs font-semibold text-slate-500">{{ $doctor['id'] }}</td>
-                            <td class="px-6 py-4">
-                                <div class="flex items-center gap-3">
-                                    <div class="w-8 h-8 rounded-full bg-blue-100 flex items-center justify-center text-blue-600 font-bold text-xs">
-                                        <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
-                                        </svg>
+                        <template x-for="doctor in filteredDoctors" :key="doctor.id">
+                            <tr class="hover:bg-slate-50/50 transition-colors">
+                                <td class="px-6 py-4 text-xs font-semibold text-slate-500" x-text="doctor.id"></td>
+                                <td class="px-6 py-4">
+                                    <div class="flex items-center gap-3">
+                                        <div class="w-8 h-8 rounded-full bg-blue-100 flex items-center justify-center text-blue-600 font-bold text-xs">
+                                            <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                                            </svg>
+                                        </div>
+                                        <span class="text-xs font-bold text-slate-700" x-text="doctor.nama"></span>
                                     </div>
-                                    <span class="text-xs font-bold text-slate-700">{{ $doctor['nama'] }}</span>
-                                </div>
-                            </td>
-                            <td class="px-6 py-4 text-xs font-medium text-slate-600">{{ $doctor['spesialisasi'] }}</td>
-                            <td class="px-6 py-4 text-xs">
-                                <div class="flex flex-wrap gap-1.5">
-                                    @foreach($doctor['poli'] as $poli)
-                                        @php
-                                            $badgeClass = $poli === 'VIP' ? 'bg-amber-50 text-amber-600 border border-amber-100' : 'bg-blue-50 text-blue-600 border border-blue-100';
-                                        @endphp
-                                        <span class="px-2.5 py-1 text-[10px] font-bold rounded-md {{ $badgeClass }}">{{ $poli }}</span>
-                                    @endforeach
-                                </div>
-                            </td>
-                            <td class="px-6 py-4 text-xs text-right">
-                                <div class="inline-flex items-center gap-2">
-                                    <button 
-                                        @click="openModal = true; isEdit = true; modalTitle = 'Edit Data Dokter'; namaDokter = '{{ $doctor['nama'] }}'; spesialisasi = '{{ $doctor['spesialisasi'] }}'; poliTugasan = {{ json_encode($doctor['poli']) }}"
-                                        class="p-2 text-slate-400 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-all"
-                                        title="Edit Dokter"
-                                    >
-                                        <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                                            <path stroke-linecap="round" stroke-linejoin="round" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"/>
-                                        </svg>
-                                    </button>
-                                    <button 
-                                        @click="if(confirm('Hapus dokter ini?')) alert('Data berhasil dihapus (Mocking Action)')"
-                                        class="p-2 text-slate-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition-all"
-                                        title="Hapus"
-                                    >
-                                        <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                                            <path stroke-linecap="round" stroke-linejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-4v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>
-                                        </svg>
-                                    </button>
-                                </div>
-                            </td>
+                                </td>
+                                <td class="px-6 py-4 text-xs font-medium text-slate-600" x-text="doctor.spesialisasi"></td>
+                                <td class="px-6 py-4 text-xs">
+                                    <div class="flex flex-wrap gap-1.5">
+                                        <template x-for="poli in doctor.poli">
+                                            <span 
+                                                class="px-2.5 py-1 text-[10px] font-bold rounded-md border"
+                                                :class="poli === 'VIP' ? 'bg-amber-50 text-amber-600 border border-amber-100' : 'bg-blue-50 text-blue-600 border border-blue-100'"
+                                                x-text="poli"
+                                            ></span>
+                                        </template>
+                                    </div>
+                                </td>
+                                <td class="px-6 py-4 text-xs text-right">
+                                    <div class="inline-flex items-center gap-2">
+                                        <button 
+                                            @click="openModal = true; isEdit = true; modalTitle = 'Edit Data Dokter'; editingId = doctor.id; namaDokter = doctor.nama; spesialisasi = doctor.spesialisasi; poliTugasan = [...doctor.poli]"
+                                            class="p-2 text-slate-400 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-all"
+                                            title="Edit Dokter"
+                                        >
+                                            <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                                <path stroke-linecap="round" stroke-linejoin="round" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"/>
+                                            </svg>
+                                        </button>
+                                        <button 
+                                            @click="triggerDelete(doctor.id)"
+                                            class="p-2 text-slate-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition-all"
+                                            title="Hapus"
+                                        >
+                                            <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                                <path stroke-linecap="round" stroke-linejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-4v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>
+                                            </svg>
+                                        </button>
+                                    </div>
+                                </td>
+                            </tr>
+                        </template>
+                        <tr x-show="filteredDoctors.length === 0" style="display: none;">
+                            <td colspan="5" class="px-6 py-8 text-center text-slate-400 text-sm">Tidak ada data ditemukan.</td>
                         </tr>
-                        @endforeach
                     </tbody>
                 </table>
             </div>
@@ -146,7 +236,38 @@
                 <div x-show="isEdit" style="display: none;">
                     @include('admin.form.doctor.edit')
                 </div>
+            </div>
+        </div>
+        <div x-show="openDeleteModal" class="fixed inset-0 z-50 flex items-center justify-center p-4" style="display: none;" x-cloak>
+            <div x-show="openDeleteModal" x-transition.opacity.duration.200ms @click="openDeleteModal = false" class="absolute inset-0 bg-slate-900/40 backdrop-blur-sm"></div>
 
+            <div 
+                x-show="openDeleteModal"
+                x-transition:enter="transition ease-out duration-200"
+                x-transition:enter-start="opacity-0 scale-95"
+                x-transition:enter-end="opacity-100 scale-100"
+                x-transition:leave="transition ease-in duration-150"
+                x-transition:leave-start="opacity-100 scale-100"
+                x-transition:leave-end="opacity-0 scale-95"
+                class="bg-white rounded-2xl shadow-xl border border-slate-100 w-full max-w-md overflow-hidden z-10 relative"
+            >
+                <div class="p-6 text-center">
+                    <div class="w-12 h-12 rounded-full bg-red-50 text-red-600 flex items-center justify-center mx-auto mb-4 border border-red-100">
+                        <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-4v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>
+                        </svg>
+                    </div>
+                    <h3 class="text-base font-bold text-slate-800 mb-2">Konfirmasi Hapus</h3>
+                    <p class="text-xs text-slate-500 leading-relaxed mb-6">Apakah Anda yakin ingin menghapus data dokter ini? Tindakan ini tidak dapat dibatalkan.</p>
+                    <div class="flex items-center justify-center gap-3">
+                        <button type="button" @click="openDeleteModal = false" class="px-4 py-2 text-xs font-semibold text-slate-500 hover:bg-slate-50 rounded-xl transition-colors border border-slate-200/60">
+                            Batal
+                        </button>
+                        <button type="button" @click="confirmDelete()" class="px-5 py-2 text-xs font-semibold bg-red-600 text-white rounded-xl hover:bg-red-700 transition-colors shadow-sm">
+                            Ya, Hapus
+                        </button>
+                    </div>
+                </div>
             </div>
         </div>
 
