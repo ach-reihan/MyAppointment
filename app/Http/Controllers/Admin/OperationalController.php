@@ -8,6 +8,8 @@ use App\Models\Patient;
 use App\Models\Doctor;
 use App\Models\Clinic;
 use Illuminate\View\View;
+use Illuminate\Http\Request;
+use Illuminate\Http\JsonResponse;
 
 class OperationalController 
 {
@@ -27,6 +29,36 @@ class OperationalController
             'doctors'  => Doctor::with('user')->get(),
             'clinics'  => Clinic::all(),
         ]);
+    }
+
+    public function storeQueue(Request $request): JsonResponse
+    {
+        $validated = $request->validate([
+            'patient_id'           => 'required|string|exists:patients,id',
+            'doctor_id'            => 'required|string|exists:doctors,id',
+            'clinic_id'            => 'required|string|exists:clinics,id',
+            'appointment_datetime' => 'required|string',
+            'status'               => 'required|string|in:pending,approved,completed,cancelled',
+            'complaint'            => 'required|string',
+        ]);
+
+        $this->operationalService->createQueue($validated);
+
+        return response()->json(['success' => true]);
+    }
+
+    public function doneQueue(string $id): JsonResponse
+    {
+        $this->operationalService->markQueueAsDone($id);
+
+        return response()->json(['success' => true]);
+    }
+
+    public function destroyQueue(string $id): JsonResponse
+    {
+        $this->operationalService->deleteQueue($id);
+
+        return response()->json(['success' => true]);
     }
 
     public function history(): View
