@@ -1,4 +1,4 @@
-<form @submit.prevent="alert('Pasien Baru Berhasil Ditambahkan!'); openModal = false;" class="p-6 space-y-4">
+<form @submit.prevent="saveData()" class="p-6 space-y-4">
     <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
         <div>
             <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1.5">ID Pasien</label>
@@ -29,6 +29,7 @@
             <input 
                 type="tel" 
                 x-model="noTelepon"
+                @input="noTelepon = noTelepon.replace(/[^0-9+\-\s]/g, '')"
                 placeholder="Contoh: 0812-..."
                 required
                 class="w-full px-3.5 py-2 text-sm bg-slate-50 border border-slate-200 rounded-lg text-slate-800 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all"
