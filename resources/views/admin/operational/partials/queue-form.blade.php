@@ -102,6 +102,12 @@
                 </div>
             </div>
 
+            <div>
+                <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1.5">Keluhan Pasien</label>
+                <textarea x-model="formQueue.complaint" rows="2" placeholder="Masukkan keluhan pasien..." required
+                    class="w-full px-3.5 py-2 text-sm bg-slate-50 border border-slate-200 rounded-lg text-slate-800 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all resize-none"></textarea>
+            </div>
+
             <div class="mt-6 pt-4 border-t border-slate-100 flex items-center justify-end gap-2">
                 <button type="button" @click="openQueueModal = false"
                     class="px-4 py-2 text-xs font-semibold text-slate-500 hover:bg-slate-50 rounded-xl transition-colors">
