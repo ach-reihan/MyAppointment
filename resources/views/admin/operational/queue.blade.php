@@ -203,8 +203,9 @@
                                         :class="{
                                             'bg-amber-100/50 text-amber-600 border-amber-100': q.color === 'amber',
                                             'bg-blue-100/50 text-blue-600 border-blue-100': q.color === 'blue',
+                                            'bg-indigo-100/50 text-indigo-600 border-indigo-100': q.color === 'indigo',
                                             'bg-emerald-100/50 text-emerald-600 border-emerald-100': q.color === 'emerald',
-                                            'bg-slate-100 text-slate-600 border-slate-200': !['amber', 'blue', 'emerald'].includes(q.color)
+                                            'bg-slate-100 text-slate-600 border-slate-200': !['amber', 'blue', 'indigo', 'emerald'].includes(q.color)
                                         }"
                                         x-text="q.status"
                                     ></span>
