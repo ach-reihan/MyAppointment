@@ -33,7 +33,10 @@ Route::prefix('admin')->name('admin.')->group(function () {
     });
 
     Route::prefix('operational')->name('operational.')->group(function () {
-        Route::get('/queue',   [OperationalController::class, 'queue'])->name('queue');
-        Route::get('/history', [OperationalController::class, 'history'])->name('history');
+        Route::get('/queue',            [OperationalController::class, 'queue'])->name('queue');
+        Route::post('/queue',           [OperationalController::class, 'storeQueue'])->name('queue.store');
+        Route::put('/queue/{id}/done',   [OperationalController::class, 'doneQueue'])->name('queue.done');
+        Route::delete('/queue/{id}',     [OperationalController::class, 'destroyQueue'])->name('queue.destroy');
+        Route::get('/history',          [OperationalController::class, 'history'])->name('history');
     });
 });
