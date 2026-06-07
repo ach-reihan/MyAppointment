@@ -190,7 +190,7 @@
                                         </button>
                                         
                                         <button 
-                                             x-show="user.id !== currentUserId"
+                                             x-show="user.id.toLowerCase() !== currentUserId.toLowerCase()"
                                              @click="triggerDelete(user.id)"
                                              class="p-2 text-slate-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition-all"
                                              title="Hapus"
