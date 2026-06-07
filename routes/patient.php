@@ -1,17 +1,13 @@
 <?php
-
+use App\Http\Controllers\Patient\PatientController;
+use App\Http\Controllers\Patient\FormController;
 use Illuminate\Support\Facades\Route;
 
 Route::prefix('patient')->name('patient.')->group(function () {
     
-    // URL: /patient | Nama Rute: patient.dashboard
-    Route::get('/', function () {
-        return view('patient.DashboardPatient');
-    })->name('dashboard');
-
-    // URL: /patient/FormAppointment | Nama Rute: patient.FormAppointment
-    Route::get('/FormAppointment', function () {
-        return view('patient.FormAppointment');
-    })->name('FormAppointment');
-
+    Route::get('/patient', [PatientController::class, 'dashboard'])->name('DashboardPatient');
+    Route::get('/FormAppointment', [FormController::class, 'createAppointment'])->name('FormAppointment');
+    Route::get('/medical-history', [PatientController::class, 'medicalHistory'])->name('patient.MedicalHistory');
+    Route::get('/appointment/{id}/detail', [PatientController::class, 'showAppointmentDetail'])->name('patient.appointment.detail');
+    Route::get('/medical-history/{id}/detail', [PatientController::class, 'medicalHistoryDetail'])->name('patient.MedicalHistory.Detail');
 });
