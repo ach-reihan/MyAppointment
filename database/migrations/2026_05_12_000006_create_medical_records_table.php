@@ -17,7 +17,7 @@ return new class extends Migration
             $table->foreignUlid('doctor_id')->constrained()->cascadeOnDelete();
             $table->foreignUlid('appointment_id')->constrained()->cascadeOnDelete()->unique();
 
-            $table->timestampTz('checkup_at');
+            $table->timestampTz('checkup_date');
             
             $table->text('diagnoses');
             $table->text('action');
