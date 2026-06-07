@@ -4,10 +4,95 @@
         openModal: false, 
         isEdit: false,
         modalTitle: 'Tambah Poliklinik Baru',
+        editingId: '',
         namaPoli: '',
         deskripsi: '',
-        statusPoli: 'AKTIF'
-    }">
+        statusPoli: 'AKTIF',
+
+        // Data & Pencarian
+        searchQuery: '',
+        polyclinicList: {{ json_encode($polyclinics) }},
+        openDeleteModal: false,
+        deletingId: '',
+
+        get filteredPolyclinics() {
+            if (this.searchQuery === '') return this.polyclinicList;
+            const term = this.searchQuery.toLowerCase();
+            return this.polyclinicList.filter(p => {
+                return p.nama.toLowerCase().includes(term) || 
+                       p.deskripsi.toLowerCase().includes(term);
+            });
+        },
+
+        async saveData() {
+            const url = this.isEdit 
+                ? `/admin/master-data/polyclinics/${this.editingId}` 
+                : '/admin/master-data/polyclinics';
+            
+            const method = this.isEdit ? 'PUT' : 'POST';
+            
+            const payload = {
+                name: this.namaPoli,
+                description: this.deskripsi,
+                status: this.statusPoli
+            };
+            
+            try {
+                const response = await fetch(url, {
+                    method: method,
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                        'Accept': 'application/json'
+                    },
+                    body: JSON.stringify(payload)
+                });
+                
+                const result = await response.json();
+                if (response.ok && result.success) {
+                    window.location.reload();
+                } else {
+                    const message = result.message || 'Terjadi kesalahan saat menyimpan data.';
+                    const errors = result.errors ? Object.values(result.errors).flat().join('\n') : '';
+                    alert(message + (errors ? '\n\n' + errors : ''));
+                }
+            } catch (error) {
+                console.error(error);
+                alert('Gagal menghubungi server.');
+            }
+        },
+
+        triggerDelete(id) {
+            this.deletingId = id;
+            this.openDeleteModal = true;
+        },
+
+        async confirmDelete() {
+            this.openDeleteModal = false;
+            try {
+                const response = await fetch(`/admin/master-data/polyclinics/${this.deletingId}`, {
+                    method: 'DELETE',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                        'Accept': 'application/json'
+                    }
+                });
+                
+                const result = await response.json();
+                if (response.ok && result.success) {
+                    window.location.reload();
+                } else {
+                    alert(result.message || 'Gagal menghapus poliklinik.');
+                }
+            } catch (error) {
+                console.error(error);
+                alert('Gagal menghubungi server.');
+            }
+        }
+    }"
+    @global-search.window="searchQuery = $event.detail"
+    >
 
         <div class="mb-6">
             <h1 class="text-xl font-bold text-slate-800 tracking-tight">Master Data Management</h1>
@@ -35,7 +120,7 @@
                     <h2 class="text-lg font-bold text-slate-800">Manajemen Poliklinik</h2>
                 </div>
                 <button 
-                    @click="openModal = true; isEdit = false; modalTitle = 'Tambah Poliklinik Baru'; namaPoli = ''; deskripsi = ''; statusPoli = 'AKTIF'" 
+                    @click="openModal = true; isEdit = false; modalTitle = 'Tambah Poliklinik Baru'; editingId = ''; namaPoli = ''; deskripsi = ''; statusPoli = 'AKTIF'" 
                     class="inline-flex items-center gap-2 px-4 py-2.5 bg-blue-600 text-white rounded-xl text-xs font-semibold hover:bg-blue-700 transition-colors shadow-sm"
                 >
                     <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
@@ -43,53 +128,63 @@
                     </svg>
                     Tambah Poli
                 </button>
+            </div>            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                <template x-for="poli in filteredPolyclinics" :key="poli.id">
+                    <div class="bg-white rounded-2xl shadow-sm border border-slate-100 p-6 relative overflow-hidden group hover:shadow-md transition-all">
+                        <div class="absolute left-0 top-0 bottom-0 w-1.5" :class="poli.border_color"></div>
+
+                        <div class="flex justify-between items-start mb-4 pl-2">
+                            <div class="w-10 h-10 rounded-full bg-slate-50 flex items-center justify-center text-slate-600">
+                                <template x-if="poli.icon === 'umum'">
+                                    <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                        <path stroke-linecap="round" stroke-linejoin="round" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"/>
+                                    </svg>
+                                </template>
+                                <template x-if="poli.icon !== 'umum'">
+                                    <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                        <path stroke-linecap="round" stroke-linejoin="round" d="M14.828 14.828a4 4 0 01-5.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                                    </svg>
+                                </template>
+                            </div>
+                            
+                            <div class="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                                 <button 
+                                    @click="openModal = true; isEdit = true; modalTitle = 'Edit Data Poliklinik'; editingId = poli.id; namaPoli = poli.nama; deskripsi = poli.deskripsi; statusPoli = poli.status"
+                                    class="p-1.5 text-slate-400 hover:text-blue-600 hover:bg-blue-50 rounded transition-colors"
+                                >
+                                    <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"/></svg>
+                                </button>
+                                <button 
+                                    @click="triggerDelete(poli.id)"
+                                    class="p-1.5 text-slate-400 hover:text-red-600 hover:bg-red-50 rounded transition-colors"
+                                >
+                                    <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-4v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
+                                </button>
+                            </div>
+                        </div>
+
+                        <div class="pl-2">
+                            <h3 class="text-base font-bold text-slate-800 mb-2" x-text="poli.nama"></h3>
+                            <p class="text-xs text-slate-500 leading-relaxed mb-6 min-h-[40px]" x-text="poli.deskripsi"></p>
+                            
+                            <div class="flex items-center justify-between border-t border-slate-100 pt-4 mt-auto">
+                                <span class="text-xs font-semibold text-slate-600" x-text="poli.jumlah_dokter + ' Dokter Aktif'"></span>
+                                <span 
+                                    class="px-2.5 py-1 text-[10px] font-bold rounded border"
+                                    :class="{
+                                        'bg-emerald-50 text-emerald-600 border-emerald-100': poli.status === 'AKTIF',
+                                        'bg-rose-50 text-rose-600 border-rose-100': poli.status === 'NON-AKTIF',
+                                        'bg-amber-50 text-amber-600 border-amber-100': poli.status === 'MAINTENANCE'
+                                    }"
+                                    x-text="poli.status"
+                                ></span>
+                            </div>
+                        </div>
+                    </div>
+                </template>
             </div>
-
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                @foreach($polyclinics as $poli)
-                <div class="bg-white rounded-2xl shadow-sm border border-slate-100 p-6 relative overflow-hidden group hover:shadow-md transition-all">
-                    <div class="absolute left-0 top-0 bottom-0 w-1.5 {{ $poli['border_color'] }}"></div>
-
-                    <div class="flex justify-between items-start mb-4 pl-2">
-                        <div class="w-10 h-10 rounded-full bg-slate-50 flex items-center justify-center text-slate-600">
-                            @if($poli['icon'] === 'umum')
-                                <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                                    <path stroke-linecap="round" stroke-linejoin="round" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"/>
-                                </svg>
-                            @else
-                                <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                                    <path stroke-linecap="round" stroke-linejoin="round" d="M14.828 14.828a4 4 0 01-5.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
-                                </svg>
-                            @endif
-                        </div>
-                        
-                        <div class="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
-                            <button 
-                                @click="openModal = true; isEdit = true; modalTitle = 'Edit Data Poliklinik'; namaPoli = '{{ $poli['nama'] }}'; deskripsi = '{{ $poli['deskripsi'] }}'; statusPoli = '{{ $poli['status'] }}'"
-                                class="p-1.5 text-slate-400 hover:text-blue-600 hover:bg-blue-50 rounded transition-colors"
-                            >
-                                <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"/></svg>
-                            </button>
-                            <button 
-                                @click="if(confirm('Hapus poli ini?')) alert('Data berhasil dihapus (Mocking)')"
-                                class="p-1.5 text-slate-400 hover:text-red-600 hover:bg-red-50 rounded transition-colors"
-                            >
-                                <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-4v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
-                            </button>
-                        </div>
-                    </div>
-
-                    <div class="pl-2">
-                        <h3 class="text-base font-bold text-slate-800 mb-2">{{ $poli['nama'] }}</h3>
-                        <p class="text-xs text-slate-500 leading-relaxed mb-6 min-h-[40px]">{{ $poli['deskripsi'] }}</p>
-                        
-                        <div class="flex items-center justify-between border-t border-slate-100 pt-4 mt-auto">
-                            <span class="text-xs font-semibold text-slate-600">{{ $poli['jumlah_dokter'] }} Dokter Aktif</span>
-                            <span class="px-2.5 py-1 text-[10px] font-bold rounded bg-emerald-50 text-emerald-600 border border-emerald-100">{{ $poli['status'] }}</span>
-                        </div>
-                    </div>
-                </div>
-                @endforeach
+            <div x-show="filteredPolyclinics.length === 0" class="text-center text-slate-400 text-sm py-8 bg-white rounded-2xl border border-slate-100 shadow-sm mt-6" style="display: none;">
+                Tidak ada data ditemukan.
             </div>
         </div>
 
@@ -121,5 +216,38 @@
                 </div>
             </div>
         </div>
+        <div x-show="openDeleteModal" class="fixed inset-0 z-50 flex items-center justify-center p-4" style="display: none;" x-cloak>
+            <div x-show="openDeleteModal" x-transition.opacity.duration.200ms @click="openDeleteModal = false" class="absolute inset-0 bg-slate-900/40 backdrop-blur-sm"></div>
+
+            <div 
+                x-show="openDeleteModal"
+                x-transition:enter="transition ease-out duration-200"
+                x-transition:enter-start="opacity-0 scale-95"
+                x-transition:enter-end="opacity-100 scale-100"
+                x-transition:leave="transition ease-in duration-150"
+                x-transition:leave-start="opacity-100 scale-100"
+                x-transition:leave-end="opacity-0 scale-95"
+                class="bg-white rounded-2xl shadow-xl border border-slate-100 w-full max-w-md overflow-hidden z-10 relative"
+            >
+                <div class="p-6 text-center">
+                    <div class="w-12 h-12 rounded-full bg-red-50 text-red-600 flex items-center justify-center mx-auto mb-4 border border-red-100">
+                        <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-4v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>
+                        </svg>
+                    </div>
+                    <h3 class="text-base font-bold text-slate-800 mb-2">Konfirmasi Hapus</h3>
+                    <p class="text-xs text-slate-500 leading-relaxed mb-6">Apakah Anda yakin ingin menghapus poliklinik ini? Tindakan ini tidak dapat dibatalkan.</p>
+                    <div class="flex items-center justify-center gap-3">
+                        <button type="button" @click="openDeleteModal = false" class="px-4 py-2 text-xs font-semibold text-slate-500 hover:bg-slate-50 rounded-xl transition-colors border border-slate-200/60">
+                            Batal
+                        </button>
+                        <button type="button" @click="confirmDelete()" class="px-5 py-2 text-xs font-semibold bg-red-600 text-white rounded-xl hover:bg-red-700 transition-colors shadow-sm">
+                            Ya, Hapus
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
     </div>
 </x-app-layout>
