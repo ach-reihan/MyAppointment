@@ -1,4 +1,4 @@
-<form @submit.prevent="alert('Dokter Baru Berhasil Ditambahkan!'); openModal = false;" class="p-6 space-y-4">
+<form @submit.prevent="saveData()" class="p-6 space-y-4">
     <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
         <div>
             <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1.5">Nama Lengkap & Gelar</label>
