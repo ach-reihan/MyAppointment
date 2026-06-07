@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Services\Admin\MasterDataService;
+use App\Models\Clinic;
 use Illuminate\View\View;
 use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
@@ -68,7 +69,8 @@ class MasterDataController
     public function doctors(): View
     {
         return view('admin.master-data.doctors', [
-            'doctors' => $this->masterDataService->getDoctors()
+            'doctors' => $this->masterDataService->getDoctors(),
+            'clinics' => Clinic::all()
         ]);
     }
 
@@ -175,7 +177,7 @@ class MasterDataController
     public function storePolyclinic(Request $request): JsonResponse
     {
         $validated = $request->validate([
-            'name'        => 'required|string|in:Poli Umum,Poli Anak,Poli Jantung,Poli Gigi,VIP',
+            'name'        => 'required|string|max:255', 
             'description' => 'required|string',
             'status'      => 'required|string|in:AKTIF,NON-AKTIF,MAINTENANCE',
         ]);
@@ -192,7 +194,7 @@ class MasterDataController
     public function updatePolyclinic(Request $request, string $id): JsonResponse
     {
         $validated = $request->validate([
-            'name'        => 'required|string|in:Poli Umum,Poli Anak,Poli Jantung,Poli Gigi,VIP',
+            'name'        => 'required|string|max:255',
             'description' => 'required|string',
             'status'      => 'required|string|in:AKTIF,NON-AKTIF,MAINTENANCE',
         ]);

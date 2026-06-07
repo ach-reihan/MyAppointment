@@ -52,10 +52,6 @@
                 class="absolute right-0 mt-2 w-48 bg-white border border-slate-100 rounded-lg shadow-lg py-1 z-50"
                 style="display: none;" x-cloak>
 
-                <a href="#" class="block px-4 py-2 text-sm text-slate-700 hover:bg-slate-50 transition-colors">
-                    Profil Saya
-                </a>
-
                 <div class="h-px bg-slate-100 my-1"></div>
 
                 <form method="POST" action="{{ route('logout') }}">

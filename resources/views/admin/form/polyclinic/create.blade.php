@@ -1,10 +1,12 @@
 <form @submit.prevent="saveData()" class="p-6 space-y-4">
+    
     <div>
         <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1.5">Nama Poliklinik</label>
         <input 
             type="text" 
+            name="name"
             x-model="namaPoli"
-            placeholder="Contoh: Poli Mata"
+            placeholder="Contoh: Poli Mata, Poli THT, dll."
             required
             class="w-full px-3.5 py-2 text-sm bg-slate-50 border border-slate-200 rounded-lg text-slate-800 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all"
         >
@@ -12,7 +14,7 @@
 
     <div>
         <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1.5">Deskripsi Layanan</label>
-        <textarea x-model="deskripsi" rows="3" placeholder="Jelaskan layanan yang tersedia pada poliklinik ini..."
+        <textarea name="description" x-model="deskripsi" rows="3" placeholder="Jelaskan layanan yang tersedia pada poliklinik ini..."
             required
             class="w-full px-3.5 py-2 text-sm bg-slate-50 border border-slate-200 rounded-lg text-slate-800 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all resize-none"></textarea>
     </div>
@@ -20,7 +22,7 @@
     <div>
         <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1.5">Status Operasional</label>
         <div class="relative">
-            <select x-model="statusPoli" required
+            <select name="status" x-model="statusPoli" required
                 class="w-full px-3.5 py-2 text-sm bg-slate-50 border border-slate-200 rounded-lg text-slate-800 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 appearance-none transition-all">
                 <option value="AKTIF">AKTIF</option>
                 <option value="NON-AKTIF">NON-AKTIF</option>
