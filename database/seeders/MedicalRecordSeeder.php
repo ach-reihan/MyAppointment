@@ -18,7 +18,7 @@ class MedicalRecordSeeder extends Seeder
                 'appointment_id' => $appointment->id,
                 'patient_id' => $appointment->patient_id,
                 'doctor_id' => $appointment->doctor_id,
-                'checkup_at' => $appointment->appointment_datetime,
+                'checkup_date' => $appointment->appointment_datetime,
             ]);
         });
     }
