@@ -45,7 +45,6 @@
                                     <td class="py-3"><span class="patient-number">{{ $patient['queue_number'] }}</span></td>
                                     <td>
                                         <div class="fw-bold text-dark">{{ $patient['name'] }}</div>
-                                        <div class="text-muted small">{{ $patient['insurance'] }}</div>
                                     </td>
                                     <td class="text-muted">{{ $patient['complaint'] }}</td>
                                     
