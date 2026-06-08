@@ -81,13 +81,7 @@
                                             placeholder="Jelaskan secara singkat gejala atau keluhan Anda..."></textarea>
                                     </div>
 
-                                    <div class="col-12">
-                                        <label class="form-label text-muted fw-bold text-uppercase form-label-custom">
-                                            <i class="bi bi-card-list me-1"></i> Catatan Internal
-                                        </label>
-                                        <textarea class="form-control custom-input py-3" rows="4" name="riwayat_penyakit"
-                                            placeholder="Jelaskan riwayat penyakit Anda..."></textarea>
-                                    </div>
+
 
                                     <button type="submit"
                                         class="btn btn-primary w-100 py-3 rounded-3 fw-bold mb-3 d-flex justify-content-center align-items-center gap-2">
