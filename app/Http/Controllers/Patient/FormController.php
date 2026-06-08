@@ -30,7 +30,6 @@ class FormController
             'tanggal' => 'required|date|after_or_equal:today',
             'waktu' => 'required',
             'keluhan' => 'required|string|min:5',
-            'riwayat_penyakit' => 'nullable|string',
         ], [
             'poliklinik.required' => 'Poliklinik wajib dipilih.',
             'poliklinik.exists' => 'Poliklinik tidak valid.',
@@ -56,17 +55,12 @@ class FormController
 
         $appointment_datetime = Carbon::parse($request->tanggal . ' ' . $request->waktu);
 
-        $complaint = $request->keluhan;
-        if ($request->riwayat_penyakit) {
-            $complaint .= "\n\nCatatan Riwayat Penyakit:\n" . $request->riwayat_penyakit;
-        }
-
         Appointment::create([
             'patient_id' => $patient->id,
             'doctor_id' => $doctor->id,
             'clinic_id' => $clinic->id,
             'appointment_datetime' => $appointment_datetime,
-            'complaint' => $complaint,
+            'complaint' => $request->keluhan,
             'status' => 'pending',
         ]);
 
