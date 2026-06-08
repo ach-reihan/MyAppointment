@@ -50,24 +50,51 @@
                                     <td class="text-muted">{{ $patient['complaint'] }}</td>
                                     
                                     <td>
-                                        @if($patient['status'] === 'Menunggu')
-                                            <span class="badge rounded-pill badge-menunggu px-3 py-2">Menunggu</span>
-                                        @else
-                                            <span class="badge rounded-pill badge-selesai px-3 py-2">Selesai</span>
-                                        @endif
-                                    </td>
-                                    
-                                    <td class="text-end">
-                                        @if($patient['status'] === 'Menunggu')
-                                            <a href="{{ route('examination.Show', ['id' => $patient['id']]) }}" class="btn btn-primary btn-sm px-3 py-2 rounded-3 d-inline-flex align-items-center gap-2">
-                                                <i class="bi bi-person-bounding-box"></i> Periksa Pasien
-                                            </a>
-                                        @else
-                                            <a href="{{ route('examination.Detail', ['id' => $patient['id']]) }}" class="btn btn-link text-dark text-decoration-none btn-sm px-3 py-2 d-inline-flex align-items-center gap-2">
-                                                <i class="bi bi-eye"></i> Detail
-                                            </a>
-                                        @endif
-                                    </td>
+                                         @if($patient['status'] === 'Pending')
+                                             <span class="badge rounded-pill bg-warning bg-opacity-10 text-warning px-3 py-2">Pending</span>
+                                         @elseif($patient['status'] === 'Disetujui')
+                                             <span class="badge rounded-pill bg-primary bg-opacity-10 text-primary px-3 py-2">Disetujui</span>
+                                         @elseif($patient['status'] === 'Selesai')
+                                             <span class="badge rounded-pill bg-success bg-opacity-10 text-success px-3 py-2">Selesai</span>
+                                         @else
+                                             <span class="badge rounded-pill bg-danger bg-opacity-10 text-danger px-3 py-2">Batal</span>
+                                         @endif
+                                     </td>
+                                     
+                                     <td class="text-end">
+                                         <div class="d-flex justify-content-end gap-2">
+                                             @if($patient['status'] === 'Pending')
+                                                 <form action="{{ route('examination.Approve', ['id' => $patient['id']]) }}" method="POST" class="d-inline">
+                                                     @csrf
+                                                     <button type="submit" class="btn btn-success btn-sm px-3 py-2 rounded-3 d-inline-flex align-items-center gap-1">
+                                                         <i class="bi bi-check-lg"></i> Setujui
+                                                     </button>
+                                                 </form>
+                                                 <form action="{{ route('examination.Cancel', ['id' => $patient['id']]) }}" method="POST" class="d-inline">
+                                                     @csrf
+                                                     <button type="submit" class="btn btn-outline-danger btn-sm px-3 py-2 rounded-3 d-inline-flex align-items-center gap-1">
+                                                         <i class="bi bi-x-lg"></i> Batalkan
+                                                     </button>
+                                                 </form>
+                                             @elseif($patient['status'] === 'Disetujui')
+                                                 <a href="{{ route('examination.Show', ['id' => $patient['id']]) }}" class="btn btn-primary btn-sm px-3 py-2 rounded-3 d-inline-flex align-items-center gap-2">
+                                                     <i class="bi bi-person-bounding-box"></i> Periksa
+                                                 </a>
+                                                 <form action="{{ route('examination.Cancel', ['id' => $patient['id']]) }}" method="POST" class="d-inline">
+                                                     @csrf
+                                                     <button type="submit" class="btn btn-outline-danger btn-sm px-3 py-2 rounded-3 d-inline-flex align-items-center gap-1">
+                                                         <i class="bi bi-x-lg"></i> Batalkan
+                                                     </button>
+                                                 </form>
+                                             @elseif($patient['status'] === 'Selesai')
+                                                 <a href="{{ route('examination.Detail', ['id' => $patient['id']]) }}" class="btn btn-link text-dark text-decoration-none btn-sm px-3 py-2 d-inline-flex align-items-center gap-2">
+                                                     <i class="bi bi-eye"></i> Detail
+                                                 </a>
+                                             @else
+                                                 <span class="text-muted small">Tidak ada aksi</span>
+                                             @endif
+                                         </div>
+                                     </td>
                                 </tr>
                             @endforeach
                         </tbody>
