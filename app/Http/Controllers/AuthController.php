@@ -45,7 +45,7 @@ class AuthController
             } elseif ($user->role === 'doctor') {
                 return redirect()->route('DashboardDoctor')->with('success', 'Selamat bertugas, Dokter!');
             } elseif ($user->role === 'patient') {
-                return redirect()->route('patient.dashboard')->with('success', 'Selamat datang di My Appointment!');
+                return redirect()->route('DashboardPatient')->with('success', 'Selamat datang di My Appointment!');
             }
         }
 
@@ -82,7 +82,7 @@ class AuthController
 
         Auth::login($user);
 
-        return redirect()->route('patient.dashboard')->with('success', 'Pendaftaran berhasil! Selamat datang di My Appointment!');
+        return redirect()->route('DashboardPatient')->with('success', 'Pendaftaran berhasil! Selamat datang di My Appointment!');
     }
 
     public function logout(Request $request)
