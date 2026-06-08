@@ -21,7 +21,7 @@
                 
                 <div class="row g-4">
                     <!-- Kolom Kiri: Diagnosa, Tindakan, Resep -->
-                    <div class="col-lg-8">
+                    <div class="col-12">
                         <div class="mb-4">
                             <h6 class="text-muted small fw-bold text-uppercase mb-2">
                                 <i class="bi bi-clipboard2-pulse me-1"></i> Diagnosa Medis
@@ -48,21 +48,6 @@
                                 {{ $history['prescription'] }}
                             </div>
                         </div>
-                    </div>
-
-                    <!-- Kolom Kanan: Catatan -->
-                    <div class="col-lg-4">
-                        @if(isset($history['internal_note']) && $history['internal_note'])
-                            <div class="bg-warning bg-opacity-10 border border-warning border-opacity-25 p-3 rounded-3">
-                                <div class="d-flex align-items-center gap-2 mb-2">
-                                    <i class="bi bi-exclamation-triangle text-warning"></i>
-                                    <span class="fw-bold text-dark small">Catatan Internal</span>
-                                </div>
-                                <p class="mb-0 text-muted small" style="font-style: italic;">
-                                    {{ $history['internal_note'] }}
-                                </p>
-                            </div>
-                        @endif
                     </div>
                 </div>
             </div>
