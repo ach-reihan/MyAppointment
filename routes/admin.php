@@ -6,7 +6,7 @@ use App\Http\Controllers\Admin\DashboardController as AdminDashboard;
 use App\Http\Controllers\Admin\MasterDataController;
 use App\Http\Controllers\Admin\OperationalController;
 
-Route::prefix('admin')->name('admin.')->group(function () {
+Route::prefix('admin')->name('admin.')->middleware(['auth', 'role:admin'])->group(function () {
     
     Route::get('/dashboard', [AdminDashboard::class, 'index'])->name('dashboard');
 
