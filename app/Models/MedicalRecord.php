@@ -28,4 +28,11 @@ class MedicalRecord extends Model
     {
         return $this->belongsTo(Patient::class);
     }
+
+    protected function casts(): array
+    {
+        return [
+            'checkup_date' => 'datetime',
+        ];
+    }
 }
