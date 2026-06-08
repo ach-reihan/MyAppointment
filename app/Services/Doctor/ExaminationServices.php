@@ -45,7 +45,6 @@ class ExaminationServices
                 'phone' => $appointment->patient->phone_number ?? '-',                 
                 'dob' => $appointment->patient->date_of_birth ? $appointment->patient->date_of_birth->format('Y-m-d') : '-',                 
                 'name' => $appointment->patient->display_name,                 
-                'insurance' => 'BPJS / Umum',                 
                 'complaint' => $appointment->complaint,                 
                 'status' => $statusUI,             
             ];         
@@ -66,7 +65,6 @@ class ExaminationServices
             'phone' => $appointment->patient->phone_number ?? '-',             
             'dob' => $appointment->patient->date_of_birth ? $appointment->patient->date_of_birth->format('d M Y') : '-',             
             'name' => $appointment->patient->display_name,             
-            'insurance' => 'BPJS / Umum',             
             'complaint' => $appointment->complaint,             
             'status' => $appointment->status === 'completed' ? 'Selesai' : ($appointment->status === 'cancelled' ? 'Batal' : 'Menunggu'),         
         ];     
