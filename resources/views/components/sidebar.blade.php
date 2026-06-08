@@ -68,11 +68,10 @@
 
     <div class="border-t border-slate-100 p-3">
         <div class="flex items-center gap-3 px-2 py-2 rounded-lg hover:bg-slate-50 transition-colors cursor-pointer">
-            <div class="w-8 h-8 rounded-full bg-gradient-to-br from-blue-400 to-blue-600 flex items-center justify-center flex-shrink-0 text-white text-xs font-bold">
-                SW
+            <div 
+                class="w-8 h-8 rounded-full bg-gradient-to-br from-blue-400 to-blue-600 flex items-center justify-center flex-shrink-0 text-white text-xs font-bold"> 
             </div>
             <div x-show="sidebarOpen || mobileSidebarOpen" class="overflow-hidden">
-                <p class="text-xs font-semibold text-slate-700 whitespace-nowrap">Dr. Sarah Wijaya</p>
                 <p class="text-[10px] text-slate-400 whitespace-nowrap">Super Admin</p>
             </div>
         </div>
