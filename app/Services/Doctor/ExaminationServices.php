@@ -32,12 +32,13 @@ class ExaminationServices
 
         // Mapping data dari Database agar sesuai dengan format View yang sudah Anda buat         
         return $appointments->map(function ($appointment, $index) {             
-            $statusUI = 'Menunggu';             
-            if ($appointment->status === 'completed') {                 
-                $statusUI = 'Selesai';             
-            } elseif ($appointment->status === 'cancelled') {                 
-                $statusUI = 'Batal';             
-            }             
+            $statusUI = match ($appointment->status) {
+                'pending' => 'Pending',
+                'approved' => 'Disetujui',
+                'completed' => 'Selesai',
+                'cancelled' => 'Batal',
+                default => ucfirst($appointment->status)
+            };
             return [                 
                 'id' => $appointment->id,                 
                 'queue_number' => str_pad($index + 1, 3, '0', STR_PAD_LEFT),                 
@@ -94,8 +95,7 @@ class ExaminationServices
                 'clinic' => $record->appointment->clinic->name ?? 'Poli Umum',                 
                 'diagnosis' => $record->diagnoses,                 
                 'treatment' => $record->action,                 
-                'prescription' => $record->prescription,                 
-                'internal_note' => '',              
+                'prescription' => $record->prescription,              
             ];         
         });     
     }     
@@ -125,4 +125,18 @@ class ExaminationServices
             return $appointment;         
         });     
     } 
+
+    public function approveAppointment($appointmentId)
+    {
+        $appt = Appointment::findOrFail($appointmentId);
+        $appt->update(['status' => 'approved']);
+        return $appt;
+    }
+
+    public function cancelAppointment($appointmentId)
+    {
+        $appt = Appointment::findOrFail($appointmentId);
+        $appt->update(['status' => 'cancelled']);
+        return $appt;
+    }
 }
