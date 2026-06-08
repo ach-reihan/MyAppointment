@@ -41,4 +41,9 @@ class Patient extends Model
     {
         return $this->user->name ?? ($this->getAttribute('name') ?? '');
     }
+
+    public function getNameAttribute(): string
+    {
+        return $this->user->name ?? '';
+    }
 }
