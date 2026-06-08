@@ -27,18 +27,21 @@ class FormController
     {
         $request->validate([
             'poliklinik' => 'required|exists:clinics,id',
-            'tanggal' => 'required|date|after_or_equal:today',
-            'waktu' => 'required',
-            'keluhan' => 'required|string|min:5',
+            'dokter'     => 'required|exists:doctors,id',
+            'tanggal'    => 'required|date|after_or_equal:today',
+            'waktu'      => 'required',
+            'keluhan'    => 'required|string|min:5',
         ], [
             'poliklinik.required' => 'Poliklinik wajib dipilih.',
-            'poliklinik.exists' => 'Poliklinik tidak valid.',
-            'tanggal.required' => 'Tanggal janji temu wajib diisi.',
-            'tanggal.date' => 'Format tanggal tidak valid.',
+            'poliklinik.exists'   => 'Poliklinik tidak valid.',
+            'dokter.required'     => 'Dokter wajib dipilih.',
+            'dokter.exists'       => 'Dokter tidak valid.',
+            'tanggal.required'    => 'Tanggal janji temu wajib diisi.',
+            'tanggal.date'        => 'Format tanggal tidak valid.',
             'tanggal.after_or_equal' => 'Tanggal janji temu tidak boleh di masa lalu.',
-            'waktu.required' => 'Waktu janji temu wajib diisi.',
-            'keluhan.required' => 'Keluhan utama wajib diisi.',
-            'keluhan.min' => 'Keluhan utama minimal 5 karakter.',
+            'waktu.required'      => 'Waktu janji temu wajib diisi.',
+            'keluhan.required'    => 'Keluhan utama wajib diisi.',
+            'keluhan.min'         => 'Keluhan utama minimal 5 karakter.',
         ]);
 
         $patient = $this->patientService->getPatientProfile();
@@ -47,10 +50,11 @@ class FormController
         }
 
         $clinic = Clinic::findOrFail($request->poliklinik);
-        $doctor = $clinic->doctors()->first();
+        $doctor = \App\Models\Doctor::findOrFail($request->dokter);
 
-        if (!$doctor) {
-            return back()->withErrors(['poliklinik' => 'Maaf, saat ini tidak ada dokter yang terhubung dengan poliklinik ini.'])->withInput();
+        // Ensure the doctor belongs to the selected clinic
+        if (!$clinic->doctors()->where('doctors.id', $doctor->id)->exists()) {
+            return back()->withErrors(['dokter' => 'Dokter tidak terdaftar di poliklinik yang dipilih.'])->withInput();
         }
 
         $appointment_datetime = Carbon::parse($request->tanggal . ' ' . $request->waktu);
