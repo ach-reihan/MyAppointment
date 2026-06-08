@@ -27,9 +27,15 @@
             <div class="card border-0 shadow-sm rounded-4 mb-4 mx-3">
                 <div class="card-header bg-white border-bottom-0 pt-4 pb-0 px-4 d-flex justify-content-between align-items-start">
                     <div>
-                        <span class="badge bg-primary bg-opacity-10 text-primary rounded-pill mb-2 px-3 py-2">
-                            <i class="bi bi-calendar3 me-1"></i> {{ $history['date'] }} • {{ $history['time'] }}
-                        </span>
+                        @if($history['is_cancelled'] ?? false)
+                            <span class="badge bg-danger bg-opacity-10 text-danger rounded-pill mb-2 px-3 py-2">
+                                <i class="bi bi-x-circle me-1"></i> {{ $history['date'] }} • {{ $history['time'] }}
+                            </span>
+                        @else
+                            <span class="badge bg-primary bg-opacity-10 text-primary rounded-pill mb-2 px-3 py-2">
+                                <i class="bi bi-calendar3 me-1"></i> {{ $history['date'] }} • {{ $history['time'] }}
+                            </span>
+                        @endif
                         <h5 class="fw-bold mb-0">{{ $history['type'] }}</h5>
                     </div>
                     <div class="text-end text-muted small">
