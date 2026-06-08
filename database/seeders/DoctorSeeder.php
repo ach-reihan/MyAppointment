@@ -23,7 +23,7 @@ class DoctorSeeder extends Seeder
         }
 
         Doctor::factory()
-            ->count(5)
+            ->count(10)
             ->sequence(fn (Sequence $sequence) => [
                 'specialization' => 'Spesialis ' . $specializations[$sequence->index % count($specializations)],
                 'user_id' => User::factory()->doctor()->state([
