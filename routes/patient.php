@@ -5,7 +5,6 @@ use Illuminate\Support\Facades\Route;
 
 Route::prefix('patient')->middleware(['auth', 'role:patient'])->group(function () {
     
-    // We register both names to support both standard redirect names and layout views
     Route::get('/dashboard', [PatientController::class, 'dashboard'])->name('patient.dashboard');
     Route::get('/patient', [PatientController::class, 'dashboard'])->name('DashboardPatient');
     
