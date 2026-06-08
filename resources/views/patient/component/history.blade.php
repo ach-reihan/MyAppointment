@@ -20,9 +20,15 @@
                 <div class="text-muted small mb-2">{{ $history['clinic'] }} • {{ $history['type'] }}</div>
 
                 <div class="d-flex gap-2">
-                    <span class="badge badge-subtle-secondary rounded-pill px-3 py-2 fw-normal text-truncate" style="max-width: 200px;">
-                        <i class="bi bi-clipboard2-pulse me-1"></i> {{ $history['diagnosis'] }}
-                    </span>
+                    @if($history['is_cancelled'] ?? false)
+                        <span class="badge badge-subtle-danger rounded-pill px-3 py-2 fw-normal text-truncate" style="max-width: 200px;">
+                            <i class="bi bi-x-circle me-1"></i> {{ $history['diagnosis'] }}
+                        </span>
+                    @else
+                        <span class="badge badge-subtle-secondary rounded-pill px-3 py-2 fw-normal text-truncate" style="max-width: 200px;">
+                            <i class="bi bi-clipboard2-pulse me-1"></i> {{ $history['diagnosis'] }}
+                        </span>
+                    @endif
                 </div>
             </div>
 
