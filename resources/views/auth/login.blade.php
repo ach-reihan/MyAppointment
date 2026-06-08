@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login - My Appointement</title>
+    <title>Login - My Appointment</title>
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 </head>
 <body class="bg-gray-50 flex items-center justify-center min-h-screen font-sans antialiased">
@@ -11,7 +11,7 @@
     <div class="w-full max-w-md p-6">
         
         <div class="text-center mb-8">
-            <h1 class="text-3xl font-bold text-blue-600 mb-2">My Appointement</h1>
+            <h1 class="text-3xl font-bold text-blue-600 mb-2">My Appointment</h1>
             <p class="text-gray-500 font-medium text-lg">Selamat Datang</p>
         </div>
 
