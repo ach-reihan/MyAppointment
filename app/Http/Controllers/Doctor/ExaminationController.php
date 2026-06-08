@@ -50,4 +50,19 @@ class ExaminationController
 
         return view('doctor.examination.Detail', compact('patient', 'histories'));
     }
+
+    public function store(Request $request, $id)
+    {
+        // Validasi inputan dari form
+        $request->validate([
+            'diagnoses' => 'required|string',
+            'action' => 'required|string',
+            'prescription' => 'required|string',
+        ]);
+
+        // Panggil service untuk menyimpan ke database
+        $this->examinationService->storeMedicalRecord($id, $request->all());
+
+        return response()->json(['success' => true]);
+    }
 }

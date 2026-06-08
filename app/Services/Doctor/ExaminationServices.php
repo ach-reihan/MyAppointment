@@ -4,6 +4,7 @@ namespace App\Services\Doctor;
 
 use App\Models\Appointment;
 use App\Models\Doctor;
+use App\Models\MedicalRecord;
 use Illuminate\Support\Facades\Auth;
 use Carbon\Carbon;
 
@@ -105,5 +106,26 @@ class ExaminationServices
                 'internal_note' => '', 
             ];
         });
+    }
+
+    public function storeMedicalRecord($appointmentId, array $data)
+    {
+        $appointment = Appointment::findOrFail($appointmentId);
+
+        // 1. Simpan data ke tabel medical_records
+        MedicalRecord::create([
+            'patient_id' => $appointment->patient_id,
+            'doctor_id' => $appointment->doctor_id,
+            'appointment_id' => $appointment->id,
+            'checkup_date' => now(),
+            'diagnoses' => $data['diagnoses'],
+            'action' => $data['action'],
+            'prescription' => $data['prescription'],
+        ]);
+
+        // 2. Ubah status antrean menjadi selesai
+        $appointment->update(['status' => 'completed']);
+
+        return true;
     }
 }
