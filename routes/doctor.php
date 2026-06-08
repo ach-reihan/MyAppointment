@@ -11,4 +11,6 @@ Route::prefix('doctor')->middleware(['auth', 'role:doctor'])->group(function () 
     Route::get('/examination/{id}/detail', [ExaminationController::class, 'detail'])->name('examination.Detail');
     
     Route::post('/examination/{id}', [ExaminationController::class, 'store'])->name('examination.Store');
+    Route::post('/appointment/{id}/approve', [ExaminationController::class, 'approve'])->name('examination.Approve');
+    Route::post('/appointment/{id}/cancel', [ExaminationController::class, 'cancel'])->name('examination.Cancel');
 });
