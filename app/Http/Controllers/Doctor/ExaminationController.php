@@ -77,4 +77,24 @@ class ExaminationController
             ], 500);
         }
     }
+
+    public function approve($id)
+    {
+        try {
+            $this->examinationService->approveAppointment($id);
+            return back()->with('success', 'Janji temu telah disetujui.');
+        } catch (\Exception $e) {
+            return back()->with('error', 'Gagal menyetujui janji temu: ' . $e->getMessage());
+        }
+    }
+
+    public function cancel($id)
+    {
+        try {
+            $this->examinationService->cancelAppointment($id);
+            return back()->with('success', 'Janji temu telah dibatalkan.');
+        } catch (\Exception $e) {
+            return back()->with('error', 'Gagal membatalkan janji temu: ' . $e->getMessage());
+        }
+    }
 }
