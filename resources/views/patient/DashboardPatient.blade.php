@@ -19,6 +19,16 @@
         @include('patient.component.topbar')
 
         <div class="container-fluid p-5 p-md-5 ">
+            @if (session('success'))
+                <div class="alert alert-success alert-dismissible fade show border-0 shadow-sm rounded-3 p-3 mb-4" role="alert" style="background-color: #d1e7dd; color: #0f5132;">
+                    <div class="d-flex align-items-center gap-2">
+                        <i class="bi bi-check-circle-fill fs-5"></i>
+                        <div>{{ session('success') }}</div>
+                    </div>
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+            @endif
+
             <div class="mb-4">
                 <h2 class="fw-bold mb-1">Halo, <span>{{ $patient->name ?? 'Budi Santoso' }}</span></h2>
                 <p class="text-muted">Selamat datang kembali. Berikut adalah ringkasan kesehatan Anda hari ini.</p>
@@ -53,6 +63,7 @@
         <i class="bi bi-plus-circle"></i> Buat Janji
     </a>
 
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 
 </html>
