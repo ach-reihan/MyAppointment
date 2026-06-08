@@ -17,7 +17,19 @@ class ClinicFactory extends Factory
      */
     public function definition(): array
     {
-        $clinicName = fake()->randomElement(['Poli Umum', 'Poli Gigi', 'Poli Anak', 'Poli Penyakit Dalam', 'Poli Mata']);
+        $clinicName = fake()->randomElement([
+            'Poli Umum',
+            'Poli Gigi',
+            'Poli Anak',
+            'Poli Penyakit Dalam',
+            'Poli Mata',
+            'Poli Jantung',
+            'Poli Saraf',
+            'Poli Kulit dan Kelamin',
+            'Poli THT',
+            'Poli Bedah Umum',
+            'Poli Obstetri dan Ginekologi'
+        ]);
 
         return [
             'name' => $clinicName,
