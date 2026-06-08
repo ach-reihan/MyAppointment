@@ -35,7 +35,7 @@ class PatientController
     public function medicalHistory()
     {
         $histories = $this->patientService->getPatientHistory();
-        return view('patient.MedicalHistoryList', compact('histories')); 
+        return view('patient.medicalhistory.MedicalHistoryList', compact('histories')); 
     }
 
     public function medicalHistoryDetail($id)
@@ -47,6 +47,6 @@ class PatientController
             abort(404, 'Riwayat tidak ditemukan');
         }
 
-        return view('patient.MedicalHistoryDetail', compact('history', 'patient'));
+        return view('patient.medicalhistory.MedicalHistoryDetail', compact('history', 'patient'));
     }
 }
