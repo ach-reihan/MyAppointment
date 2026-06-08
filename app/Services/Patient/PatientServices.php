@@ -2,119 +2,145 @@
 
 namespace App\Services\Patient;
 
+use App\Models\Clinic;
+use App\Models\Appointment;
+use App\Models\MedicalRecord;
+use App\Models\Patient;
+use Carbon\Carbon;
+
 class PatientServices
 {
     /**
-     * Mengambil daftar poliklinik yang tersedia (Mock Data)
+     * Mengambil daftar poliklinik yang tersedia (Database)
      */
     public function getAllClinics()
     {
-        return [
-            [
-                'id' => 'umum',
-                'name' => 'Poli Umum'
-            ],
-            [
-                'id' => 'gigi',
-                'name' => 'Poli Gigi'
-            ],
-            [
-                'id' => 'penyakit_dalam',
-                'name' => 'Poli Penyakit Dalam'
-            ],
-        ];
+        return Clinic::where('status', 'AKTIF')
+            ->orderBy('name', 'asc')
+            ->get()
+            ->map(function ($clinic) {
+                return [
+                    'id' => $clinic->id,
+                    'name' => $clinic->name
+                ];
+            })
+            ->toArray();
     }
+
+    /**
+     * Mengambil detail janji temu berdasarkan ID (Database)
+     */
     public function getAppointmentDetail($id)
     {
-        if ($id === 'APT-001') {
-            return [
-                'id' => 'APT-001',
-                'status' => 'DISETUJUI',
-                'doctor_name' => 'Dr. Andi Wijaya, Sp.PD',
-                'clinic' => 'Poli Penyakit Dalam',
-                'date' => '24 Oktober 2023',
-                'time' => '09:00 WIB',
-                'complaint' => 'Sering merasa pusing, lelah berkepanjangan, dan detak jantung kadang tidak beraturan saat malam hari.',
-                'internal_note' => 'Pernah dirawat karena gejala tifus 2 tahun lalu. Tidak memiliki riwayat alergi obat.',
-                'created_at' => '20 Oktober 2023, 10:15 WIB'
-            ];
+        $appt = Appointment::with(['doctor', 'clinic'])->find($id);
+        if (!$appt) {
+            return null;
         }
 
-        return null;
+        return [
+            'id' => $appt->id,
+            'status' => $appt->status === 'pending' ? 'MENUNGGU' : ($appt->status === 'approved' ? 'DISETUJUI' : ($appt->status === 'completed' ? 'SELESAI' : 'DIBATALKAN')),
+            'status_color' => $appt->status === 'pending' ? 'warning' : ($appt->status === 'approved' ? 'success' : ($appt->status === 'completed' ? 'info' : 'danger')),
+            'doctor_name' => $appt->doctor ? $appt->doctor->display_name : 'Dokter',
+            'clinic' => $appt->clinic ? $appt->clinic->name : 'Poliklinik',
+            'date' => $appt->appointment_datetime ? $appt->appointment_datetime->translatedFormat('d F Y') : '-',
+            'time' => $appt->appointment_datetime ? $appt->appointment_datetime->translatedFormat('H:i \W\I\B') : '-',
+            'complaint' => $appt->complaint,
+            'internal_note' => '', // Kolom ini tidak ada di database, dibiarkan kosong
+            'created_at' => $appt->created_at ? $appt->created_at->translatedFormat('d F Y, H:i \W\I\B') : '-'
+        ];
     }
 
-    
+    /**
+     * Mengambil daftar riwayat pemeriksaan pasien yang login (Database)
+     */
     public function getPatientHistory()
     {
-        return [
-            [
-                'id' => 'REC-001',
-                'date' => '12 September 2023',
-                'time' => '10:30 WIB',
-                'type' => 'Nasofaringitis Akut',
-                'doctor' => 'Dr. Sarah Fauziah',
-                'clinic' => 'Poli Umum',
-                'diagnosis' => 'Peradangan pada mukosa hidung dan tenggorokan (Faring).',
-                'treatment' => 'Pemberian obat pereda gejala, anjuran istirahat cukup dan perbanyak minum air putih.',
-                'prescription' => 'Paracetamol 500mg (3x sehari), Vitamin C (1x sehari)',
-                'internal_note' => null // Dibuat null agar kotak peringatan kuning tidak muncul di sisi pasien
-            ],
-            [
-                'id' => 'REC-002',
-                'date' => '05 Juni 2023',
-                'time' => '09:00 WIB',
-                'type' => 'Konsultasi Rutin',
-                'doctor' => 'Dr. Andi Wijaya, Sp.PD',
-                'clinic' => 'Poli Penyakit Dalam',
-                'diagnosis' => 'Hipertensi Stage 1. Tekanan darah 140/90 mmHg.',
-                'treatment' => 'Edukasi diet rendah garam, olahraga ringan 30 menit sehari.',
-                'prescription' => 'Amlodipine 5mg (1x sehari sesudah makan)',
+        $patient = $this->getPatientProfile();
+        if (!$patient) {
+            return [];
+        }
+
+        $records = MedicalRecord::where('patient_id', $patient->id)
+            ->with(['doctor', 'appointment.clinic'])
+            ->orderBy('checkup_date', 'desc')
+            ->get();
+
+        return $records->map(function ($record) {
+            return [
+                'id' => $record->id,
+                'date' => $record->checkup_date ? $record->checkup_date->translatedFormat('d F Y') : '-',
+                'time' => $record->checkup_date ? $record->checkup_date->translatedFormat('H:i \W\I\B') : '-',
+                'type' => $record->diagnoses,
+                'doctor' => $record->doctor ? $record->doctor->display_name : 'Dokter',
+                'clinic' => ($record->appointment && $record->appointment->clinic) ? $record->appointment->clinic->name : 'Poliklinik',
+                'diagnosis' => $record->diagnoses,
+                'treatment' => $record->action,
+                'prescription' => $record->prescription,
                 'internal_note' => null
-            ]
-        ];
+            ];
+        })->toArray();
     }
 
+    /**
+     * Mengambil detail riwayat pemeriksaan berdasarkan ID (Database)
+     */
     public function getHistoryDetail($id)
     {
-        $histories = $this->getPatientHistory();
-        
-        foreach ($histories as $history) {
-            if ($history['id'] === $id) {
-                return $history;
-            }
+        $record = MedicalRecord::with(['doctor', 'appointment.clinic'])->find($id);
+        if (!$record) {
+            return null;
         }
-        return null;
+
+        return [
+            'id' => $record->id,
+            'date' => $record->checkup_date ? $record->checkup_date->translatedFormat('d F Y') : '-',
+            'time' => $record->checkup_date ? $record->checkup_date->translatedFormat('H:i \W\I\B') : '-',
+            'type' => $record->diagnoses,
+            'doctor' => $record->doctor ? $record->doctor->display_name : 'Dokter',
+            'clinic' => ($record->appointment && $record->appointment->clinic) ? $record->appointment->clinic->name : 'Poliklinik',
+            'diagnosis' => $record->diagnoses,
+            'treatment' => $record->action,
+            'prescription' => $record->prescription,
+            'internal_note' => null
+        ];
     }
 
+    /**
+     * Mengambil data profil pasien yang login (Database)
+     */
     public function getPatientProfile()
     {
-        return [
-            'name' => 'Budi Santoso',
-            'id' => 'HT-88219'
-        ];
+        $user = auth()->user();
+        return $user ? $user->patient : null;
     }
 
+    /**
+     * Mengambil daftar janji temu mendatang milik pasien yang login (Database)
+     */
     public function getUpcomingAppointments()
     {
-        return [
-            [
-                'id' => 'APT-001',
-                'doctor_name' => 'Dr. Andi Wijaya, Sp.PD',
-                'clinic' => 'Poli Penyakit Dalam',
-                'date' => '24 Okt 2023',
-                'time' => '09:00 WIB',
-                'status' => 'DISETUJUI',
-                'status_color' => 'success' // Kita gunakan ini untuk warna badge di Blade nanti
-            ],
-            [
-                'id' => 'APT-002',
-                'doctor_name' => 'Dr. Sarah Fauziah',
-                'clinic' => 'Poli Umum',
-                'date' => '28 Okt 2023',
-                'time' => '10:30 WIB',
-                'status' => 'MENUNGGU',
-                'status_color' => 'warning'
-            ]
-        ];
+        $patient = $this->getPatientProfile();
+        if (!$patient) {
+            return [];
+        }
+
+        $appointments = Appointment::where('patient_id', $patient->id)
+            ->whereIn('status', ['pending', 'approved'])
+            ->with(['doctor', 'clinic'])
+            ->orderBy('appointment_datetime', 'asc')
+            ->get();
+
+        return $appointments->map(function ($appt) {
+            return [
+                'id' => $appt->id,
+                'doctor_name' => $appt->doctor ? $appt->doctor->display_name : 'Dokter',
+                'clinic' => $appt->clinic ? $appt->clinic->name : 'Poliklinik',
+                'date' => $appt->appointment_datetime ? $appt->appointment_datetime->translatedFormat('d M Y') : '-',
+                'time' => $appt->appointment_datetime ? $appt->appointment_datetime->translatedFormat('H:i \W\I\B') : '-',
+                'status' => $appt->status === 'pending' ? 'MENUNGGU' : 'DISETUJUI',
+                'status_color' => $appt->status === 'pending' ? 'warning' : 'success'
+            ];
+        })->toArray();
     }
 }
