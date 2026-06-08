@@ -31,7 +31,17 @@
                                 dengan spesialis kami.</p>
                         </div>
 
-                        <div x-data="{ showSuccessModal: false }">
+                        <div x-data="{ 
+                            showSuccessModal: false,
+                            clinics: {{ json_encode($clinics) }},
+                            selectedClinicId: '{{ old('poliklinik', '') }}',
+                            selectedDoctorId: '{{ old('dokter', '') }}',
+                            get filteredDoctors() {
+                                if (!this.selectedClinicId) return [];
+                                const clinic = this.clinics.find(c => c.id === this.selectedClinicId);
+                                return clinic ? clinic.doctors : [];
+                            }
+                        }">
 
                             @if ($errors->any())
                                 <div class="alert alert-danger alert-dismissible fade show border-0 shadow-sm rounded-3 p-3 mb-4" role="alert">
@@ -51,11 +61,23 @@
                                         <label class="form-label text-muted fw-bold text-uppercase form-label-custom">
                                             <i class="bi bi-hospital me-1"></i> Pilih Poliklinik
                                         </label>
-                                        <select class="form-select custom-input py-3" name="poliklinik">
-                                            <option selected disabled>Pilih Poliklinik</option>
+                                        <select class="form-select custom-input py-3" name="poliklinik" x-model="selectedClinicId" @change="selectedDoctorId = ''">
+                                            <option value="" disabled>Pilih Poliklinik</option>
                                             @foreach ($clinics as $clinic)
                                                 <option value="{{ $clinic['id'] }}">{{ $clinic['name'] }}</option>
                                             @endforeach
+                                        </select>
+                                    </div>
+
+                                    <div>
+                                        <label class="form-label text-muted fw-bold text-uppercase form-label-custom">
+                                            <i class="bi bi-person me-1"></i> Pilih Dokter
+                                        </label>
+                                        <select class="form-select custom-input py-3" name="dokter" x-model="selectedDoctorId" :disabled="!selectedClinicId">
+                                            <option value="" disabled>Pilih Dokter</option>
+                                            <template x-for="doctor in filteredDoctors" :key="doctor.id">
+                                                <option :value="doctor.id" x-text="doctor.name"></option>
+                                            </template>
                                         </select>
                                     </div>
 
@@ -63,14 +85,14 @@
                                         <label class="form-label text-muted fw-bold text-uppercase form-label-custom">
                                             <i class="bi bi-calendar3 me-1"></i> Tanggal Janji
                                         </label>
-                                        <input type="date" class="form-control custom-input py-3" name="tanggal">
+                                        <input type="date" class="form-control custom-input py-3" name="tanggal" value="{{ old('tanggal') }}">
                                     </div>
 
                                     <div class="col-md-6">
                                         <label class="form-label text-muted fw-bold text-uppercase form-label-custom">
                                             <i class="bi bi-clock me-1"></i> Jam Janji
                                         </label>
-                                        <input type="time" class="form-control custom-input py-3" name="waktu">
+                                        <input type="time" class="form-control custom-input py-3" name="waktu" value="{{ old('waktu') }}">
                                     </div>
 
                                     <div class="col-12">
@@ -78,7 +100,7 @@
                                             <i class="bi bi-file-text me-1"></i> Keluhan Utama
                                         </label>
                                         <textarea class="form-control custom-input py-3" rows="4" name="keluhan"
-                                            placeholder="Jelaskan secara singkat gejala atau keluhan Anda..."></textarea>
+                                            placeholder="Jelaskan secara singkat gejala atau keluhan Anda...">{{ old('keluhan') }}</textarea>
                                     </div>
 
 
