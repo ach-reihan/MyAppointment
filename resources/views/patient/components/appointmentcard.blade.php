@@ -6,7 +6,7 @@
             <div class="d-flex justify-content-between align-items-center">
                 
                 <div class="d-flex gap-4 align-items-start">
-                    <div class="bg-primary bg-opacity-10 text-primary d-flex align-items-center justify-content-center flex-shrink-0" style="width: 60px; height: 60px; border-radius: 15px;">
+                    <div class="bg-primary bg-opacity-10 text-primary d-flex align-items-center justify-content-center flex-shrink-0 appointment-icon-box">
                         <i class="bi bi-calendar-check fs-3"></i>
                     </div>
                     <div>

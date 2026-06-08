@@ -93,3 +93,23 @@ body {
     font-size: 0.75rem;
     letter-spacing: 0.5px;
 }
+
+/* Reusable Utilities for Components */
+.appointment-icon-box {
+    width: 60px;
+    height: 60px;
+    border-radius: 15px;
+}
+.text-xs {
+    font-size: 0.75rem !important;
+}
+
+.date-badge-box {
+    min-width: 70px;
+}
+.text-xxs {
+    font-size: 0.7rem !important;
+}
+.badge-max-width {
+    max-width: 200px;
+}

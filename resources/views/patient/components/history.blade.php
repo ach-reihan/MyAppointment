@@ -8,8 +8,8 @@
                 $month = isset($dateParts[1]) ? strtoupper(substr($dateParts[1], 0, 3)) : '-';
             @endphp
             
-            <div class="bg-light rounded-3 text-center p-2 me-4" style="min-width: 70px;">
-                <div class="text-muted small fw-bold text-uppercase" style="font-size: 0.7rem;">
+            <div class="bg-light rounded-3 text-center p-2 me-4 date-badge-box">
+                <div class="text-muted small fw-bold text-uppercase text-xxs">
                     {{ $month }}
                 </div>
                 <div class="fw-bold fs-4 text-dark line-height-1">{{ $day }}</div>
@@ -21,11 +21,11 @@
 
                 <div class="d-flex gap-2">
                     @if($history['is_cancelled'] ?? false)
-                        <span class="badge badge-subtle-danger rounded-pill px-3 py-2 fw-normal text-truncate" style="max-width: 200px;">
+                        <span class="badge badge-subtle-danger rounded-pill px-3 py-2 fw-normal text-truncate badge-max-width">
                             <i class="bi bi-x-circle me-1"></i> {{ $history['diagnosis'] }}
                         </span>
                     @else
-                        <span class="badge badge-subtle-secondary rounded-pill px-3 py-2 fw-normal text-truncate" style="max-width: 200px;">
+                        <span class="badge badge-subtle-secondary rounded-pill px-3 py-2 fw-normal text-truncate badge-max-width">
                             <i class="bi bi-clipboard2-pulse me-1"></i> {{ $history['diagnosis'] }}
                         </span>
                     @endif

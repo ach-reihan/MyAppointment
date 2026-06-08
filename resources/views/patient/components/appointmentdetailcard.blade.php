@@ -45,7 +45,7 @@
             </div>
         </div>
         
-        <div class="text-muted small mt-4 text-end" style="font-size: 0.75rem;">
+        <div class="text-muted small mt-4 text-end text-xs">
             Dibuat pada: {{ $appointment['created_at'] }}
         </div>
     </div>
