@@ -19,7 +19,7 @@ class DashboardController
         $pasienSelesai = 0;
 
         foreach ($patients as $patient) {
-            if ($patient['status'] === 'Menunggu') {
+            if ($patient['status'] === 'Pending' || $patient['status'] === 'Disetujui') {
                 $sisaAntrean++;
             } elseif ($patient['status'] === 'Selesai') {
                 $pasienSelesai++;
