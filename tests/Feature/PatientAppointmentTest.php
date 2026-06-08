@@ -61,6 +61,17 @@ class PatientAppointmentTest extends TestCase
         $this->doctor->clinics()->attach($this->clinic->id);
     }
 
+    public function test_patient_can_view_appointment_form(): void
+    {
+        $response = $this->actingAs($this->patientUser)
+            ->get(route('FormAppointment'));
+
+        $response->assertStatus(200);
+        $response->assertSee('Pilih Poliklinik');
+        $response->assertSee('Pilih Dokter');
+        $response->assertSee('Poli Umum');
+    }
+
     public function test_patient_can_create_appointment_with_selected_doctor(): void
     {
         $payload = [
