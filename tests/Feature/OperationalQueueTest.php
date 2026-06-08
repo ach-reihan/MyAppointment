@@ -9,6 +9,7 @@ use App\Models\Clinic;
 use App\Models\Appointment;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
+use Carbon\Carbon;
 
 class OperationalQueueTest extends TestCase
 {
@@ -73,7 +74,7 @@ class OperationalQueueTest extends TestCase
             'patient_id' => $patient->id,
             'doctor_id' => $doctor->id,
             'clinic_id' => $clinic->id,
-            'appointment_datetime' => '2026-06-07 10:00:00',
+            'appointment_datetime' => Carbon::now()->addDay()->format('Y-m-d H:i:s'),
             'status' => 'pending',
             'complaint' => 'Sakit kepala',
         ];
