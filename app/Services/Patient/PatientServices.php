@@ -46,7 +46,6 @@ class PatientServices
             'date' => $appt->appointment_datetime ? $appt->appointment_datetime->translatedFormat('d F Y') : '-',
             'time' => $appt->appointment_datetime ? $appt->appointment_datetime->translatedFormat('H:i \W\I\B') : '-',
             'complaint' => $appt->complaint,
-            'internal_note' => '', // Kolom ini tidak ada di database, dibiarkan kosong
             'created_at' => $appt->created_at ? $appt->created_at->translatedFormat('d F Y, H:i \W\I\B') : '-'
         ];
     }
@@ -61,14 +60,18 @@ class PatientServices
             return [];
         }
 
+        $history = [];
+
+        // 1. Ambil data rekam medis (status completed)
         $records = MedicalRecord::where('patient_id', $patient->id)
             ->with(['doctor', 'appointment.clinic'])
-            ->orderBy('checkup_date', 'desc')
             ->get();
 
-        return $records->map(function ($record) {
-            return [
+        foreach ($records as $record) {
+            $history[] = [
                 'id' => $record->id,
+                'is_cancelled' => false,
+                'date_raw' => $record->checkup_date,
                 'date' => $record->checkup_date ? $record->checkup_date->translatedFormat('d F Y') : '-',
                 'time' => $record->checkup_date ? $record->checkup_date->translatedFormat('H:i \W\I\B') : '-',
                 'type' => $record->diagnoses,
@@ -77,9 +80,39 @@ class PatientServices
                 'diagnosis' => $record->diagnoses,
                 'treatment' => $record->action,
                 'prescription' => $record->prescription,
-                'internal_note' => null
             ];
-        })->toArray();
+        }
+
+        // 2. Ambil data janji temu yang dibatalkan (status cancelled)
+        $cancelled = Appointment::where('patient_id', $patient->id)
+            ->where('status', 'cancelled')
+            ->with(['doctor', 'clinic'])
+            ->get();
+
+        foreach ($cancelled as $appt) {
+            $history[] = [
+                'id' => $appt->id,
+                'is_cancelled' => true,
+                'date_raw' => $appt->appointment_datetime,
+                'date' => $appt->appointment_datetime ? $appt->appointment_datetime->translatedFormat('d F Y') : '-',
+                'time' => $appt->appointment_datetime ? $appt->appointment_datetime->translatedFormat('H:i \W\I\B') : '-',
+                'type' => 'Dibatalkan',
+                'doctor' => $appt->doctor ? $appt->doctor->display_name : 'Dokter',
+                'clinic' => $appt->clinic ? $appt->clinic->name : 'Poliklinik',
+                'diagnosis' => 'Pendaftaran Dibatalkan',
+                'treatment' => 'Tidak ada tindakan (Dibatalkan)',
+                'prescription' => 'Tidak ada resep obat',
+            ];
+        }
+
+        // 3. Urutkan berdasarkan tanggal terbaru (date_raw descending)
+        usort($history, function ($a, $b) {
+            $timeA = $a['date_raw'] ? $a['date_raw']->timestamp : 0;
+            $timeB = $b['date_raw'] ? $b['date_raw']->timestamp : 0;
+            return $timeB <=> $timeA;
+        });
+
+        return $history;
     }
 
     /**
@@ -87,23 +120,41 @@ class PatientServices
      */
     public function getHistoryDetail($id)
     {
+        // Cari di MedicalRecord terlebih dahulu
         $record = MedicalRecord::with(['doctor', 'appointment.clinic'])->find($id);
-        if (!$record) {
-            return null;
+        if ($record) {
+            return [
+                'id' => $record->id,
+                'is_cancelled' => false,
+                'date' => $record->checkup_date ? $record->checkup_date->translatedFormat('d F Y') : '-',
+                'time' => $record->checkup_date ? $record->checkup_date->translatedFormat('H:i \W\I\B') : '-',
+                'type' => $record->diagnoses,
+                'doctor' => $record->doctor ? $record->doctor->display_name : 'Dokter',
+                'clinic' => ($record->appointment && $record->appointment->clinic) ? $record->appointment->clinic->name : 'Poliklinik',
+                'diagnosis' => $record->diagnoses,
+                'treatment' => $record->action,
+                'prescription' => $record->prescription,
+            ];
         }
 
-        return [
-            'id' => $record->id,
-            'date' => $record->checkup_date ? $record->checkup_date->translatedFormat('d F Y') : '-',
-            'time' => $record->checkup_date ? $record->checkup_date->translatedFormat('H:i \W\I\B') : '-',
-            'type' => $record->diagnoses,
-            'doctor' => $record->doctor ? $record->doctor->display_name : 'Dokter',
-            'clinic' => ($record->appointment && $record->appointment->clinic) ? $record->appointment->clinic->name : 'Poliklinik',
-            'diagnosis' => $record->diagnoses,
-            'treatment' => $record->action,
-            'prescription' => $record->prescription,
-            'internal_note' => null
-        ];
+        // Jika tidak ditemukan di MedicalRecord, cari di Appointment yang berstatus cancelled
+        $appt = Appointment::with(['doctor', 'clinic'])->find($id);
+        if ($appt && $appt->status === 'cancelled') {
+            return [
+                'id' => $appt->id,
+                'is_cancelled' => true,
+                'date' => $appt->appointment_datetime ? $appt->appointment_datetime->translatedFormat('d F Y') : '-',
+                'time' => $appt->appointment_datetime ? $appt->appointment_datetime->translatedFormat('H:i \W\I\B') : '-',
+                'type' => 'Dibatalkan',
+                'doctor' => $appt->doctor ? $appt->doctor->display_name : 'Dokter',
+                'clinic' => $appt->clinic ? $appt->clinic->name : 'Poliklinik',
+                'diagnosis' => 'Pendaftaran Dibatalkan',
+                'treatment' => 'Tidak ada tindakan (Dibatalkan)',
+                'prescription' => 'Tidak ada resep obat',
+            ];
+        }
+
+        return null;
     }
 
     /**
@@ -125,6 +176,7 @@ class PatientServices
             return [];
         }
 
+        // Hanya tampilkan pending dan approved (cancelled sudah masuk riwayat)
         $appointments = Appointment::where('patient_id', $patient->id)
             ->whereIn('status', ['pending', 'approved'])
             ->with(['doctor', 'clinic'])
@@ -138,8 +190,16 @@ class PatientServices
                 'clinic' => $appt->clinic ? $appt->clinic->name : 'Poliklinik',
                 'date' => $appt->appointment_datetime ? $appt->appointment_datetime->translatedFormat('d M Y') : '-',
                 'time' => $appt->appointment_datetime ? $appt->appointment_datetime->translatedFormat('H:i \W\I\B') : '-',
-                'status' => $appt->status === 'pending' ? 'MENUNGGU' : 'DISETUJUI',
-                'status_color' => $appt->status === 'pending' ? 'warning' : 'success'
+                'status' => match ($appt->status) {
+                    'pending' => 'MENUNGGU',
+                    'approved' => 'DISETUJUI',
+                    default => strtoupper($appt->status)
+                },
+                'status_color' => match ($appt->status) {
+                    'pending' => 'warning',
+                    'approved' => 'success',
+                    default => 'secondary'
+                }
             ];
         })->toArray();
     }
