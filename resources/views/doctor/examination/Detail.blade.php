@@ -11,10 +11,10 @@
     </head>
 
 <body>
-    @include('doctor.component.sidebar')
+    @include('doctor.components.sidebar')
     
     <div class="main-content">
-        @include('doctor.component.topbar')
+        @include('doctor.components.topbar')
         
         <div class="px-3">
             <div class="mb-3">
@@ -47,7 +47,7 @@
 
             <h5 class="fw-bold mb-4 ms-2">Riwayat Rekam Medis Pasien</h5>
 
-            @include('doctor.component.history')
+            @include('doctor.components.history')
 
         </div>
     </div>

@@ -13,10 +13,10 @@
 
 <body>
 
-    @include('doctor.component.sidebar')
+    @include('doctor.components.sidebar')
 
     <div class="main-content">
-        @include('doctor.component.topbar')
+        @include('doctor.components.topbar')
 
         <div class="px-3">
 
@@ -174,7 +174,7 @@
 
                     {{-- section riwayat pemeriksaan --}}
                     <div x-show="activeTab === 'history'" x-transition.opacity.duration.300ms style="display: none;">
-                        @include('doctor.component.history')
+                        @include('doctor.components.history')
                     </div>
 
                 </div>

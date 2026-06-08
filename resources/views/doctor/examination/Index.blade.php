@@ -13,10 +13,10 @@
 </head>
 <body>
 
-    @include('doctor.component.sidebar')
+    @include('doctor.components.sidebar')
 
     <div class="main-content">
-        @include('doctor.component.topbar')
+        @include('doctor.components.topbar')
         
         <div class="px-3 py-3">
             <div class="card border-0 shadow-sm rounded-4 overflow-hidden">

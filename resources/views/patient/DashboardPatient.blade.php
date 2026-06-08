@@ -13,10 +13,10 @@
 
 <body>
 
-    @include('patient.component.sidebar')
+    @include('patient.components.sidebar')
 
     <main class="main-content">
-        @include('patient.component.topbar')
+        @include('patient.components.topbar')
 
         <div class="container-fluid p-5 p-md-5 ">
             @if (session('success'))
@@ -34,7 +34,7 @@
                 <p class="text-muted">Selamat datang kembali. Berikut adalah ringkasan kesehatan Anda hari ini.</p>
             </div>
 
-            @include('patient.component.appointmentcard')
+            @include('patient.components.appointmentcard')
 
             <div class="d-flex justify-content-between align-items-center mb-4">
                 <h5 class="fw-bold mb-0">Riwayat Pemeriksaan</h5>
@@ -46,7 +46,7 @@
             <div class="mt-4">
                 <div class="mt-4">
                     @forelse($histories as $history)
-                        @include('patient.component.history', ['history' => $history])
+                        @include('patient.components.history', ['history' => $history])
                     @empty
                         <div class="text-center py-4 text-muted">
                             Belum ada riwayat pemeriksaan.

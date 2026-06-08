@@ -14,11 +14,11 @@
 
 <body>
 
-    @include('patient.component.sidebar')
+    @include('patient.components.sidebar')
 
     <main class="main-content">
 
-        @include('patient.component.topbar')
+        @include('patient.components.topbar')
 
         <div class="container-fluid p-4 p-md-4">
             <div class="d-flex justify-content-center">

@@ -11,11 +11,11 @@
 </head>
 <body>
 
-    @include('patient.component.sidebar')
+    @include('patient.components.sidebar')
 
     <div class="main-content">
         
-        @include('patient.component.topbar')
+        @include('patient.components.topbar')
 
         <div class="px-3">
             <div class="mb-4">

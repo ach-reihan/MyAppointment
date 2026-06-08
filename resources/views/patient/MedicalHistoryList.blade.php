@@ -12,11 +12,11 @@
 
 <body>
 
-    @include('patient.component.sidebar')
+    @include('patient.components.sidebar')
 
     <div class="main-content">
 
-        @include('patient.component.topbar')
+        @include('patient.components.topbar')
 
         <div class="px-3">
             <div class="mb-4">
@@ -30,7 +30,7 @@
 
             <div>
                 @forelse($histories as $history)
-                    @include('patient.component.history', ['history' => $history])
+                    @include('patient.components.history', ['history' => $history])
                 @empty
                     <div class="text-center text-muted py-5">
                         Belum ada riwayat pemeriksaan.

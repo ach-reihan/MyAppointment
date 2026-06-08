@@ -15,10 +15,10 @@
 
 <body>
 
-    @include('doctor.component.sidebar')
+    @include('doctor.components.sidebar')
 
     <main class="main-content">
-        @include('doctor.component.topbar')
+        @include('doctor.components.topbar')
 
         <div class="container-fluid p-4 p-md-5">
 
