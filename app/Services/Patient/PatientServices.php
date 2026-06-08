@@ -16,12 +16,19 @@ class PatientServices
     public function getAllClinics()
     {
         return Clinic::where('status', 'AKTIF')
+            ->with(['doctors.user'])
             ->orderBy('name', 'asc')
             ->get()
             ->map(function ($clinic) {
                 return [
                     'id' => $clinic->id,
-                    'name' => $clinic->name
+                    'name' => $clinic->name,
+                    'doctors' => $clinic->doctors->map(function ($doctor) {
+                        return [
+                            'id' => $doctor->id,
+                            'name' => $doctor->display_name,
+                        ];
+                    })->toArray(),
                 ];
             })
             ->toArray();

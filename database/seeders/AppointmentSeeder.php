@@ -24,10 +24,9 @@ class AppointmentSeeder extends Seeder
             return;
         }
 
-        for ($i = 0; $i < 22; $i++) {
+        for ($i = 0; $i < 20; $i++) {
             $patient = $patients->random();
             $doctor = $doctors->random();
-            // Get a clinic that this doctor is actually associated with, or fallback to any clinic if none is associated
             $clinic = $doctor->clinics->isNotEmpty() 
                 ? $doctor->clinics->random() 
                 : $clinics->random();

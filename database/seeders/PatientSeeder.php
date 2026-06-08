@@ -15,7 +15,7 @@ class PatientSeeder extends Seeder
     public function run(): void
     {
         Patient::factory()
-            ->count(20)
+            ->count(40)
             ->sequence(fn (Sequence $sequence) => [
                 'user_id' => User::factory()->patient()->state([
                     'username' => 'patient' . ($sequence->index + 1),
