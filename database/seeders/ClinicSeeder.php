@@ -12,7 +12,19 @@ class ClinicSeeder extends Seeder
      */
     public function run(): void
     {
-        $clinicsData = ['Poli Umum', 'Poli Gigi', 'Poli Anak', 'Poli Penyakit Dalam', 'Poli Mata'];
+        $clinicsData = [
+            'Poli Umum',
+            'Poli Gigi',
+            'Poli Anak',
+            'Poli Penyakit Dalam',
+            'Poli Mata',
+            'Poli Jantung',
+            'Poli Saraf',
+            'Poli Kulit dan Kelamin',
+            'Poli THT',
+            'Poli Bedah Umum',
+            'Poli Obstetri dan Ginekologi'
+        ];
 
         foreach ($clinicsData as $clinicName) {
             Clinic::create([
