@@ -55,7 +55,7 @@
 
     <div class="grid grid-cols-1 lg:grid-cols-5 gap-4">
 
-        <div class="lg:col-span-3 bg-white rounded-2xl border border-slate-100 shadow-sm p-5"
+        <div class="lg:col-span-5 bg-white rounded-2xl border border-slate-100 shadow-sm p-5"
              x-data="{
                  bars: {{ json_encode($weekly) }},
                  tooltip: null,
@@ -97,57 +97,6 @@
                     </div>
                 </template>
             </div>
-
-        </div>
-
-        <div class="lg:col-span-2 bg-white rounded-2xl border border-slate-100 shadow-sm p-5 flex flex-col">
-
-            <div class="flex items-center justify-between mb-4">
-                <h2 class="text-sm font-bold text-slate-800">Aktivitas Terbaru</h2>
-                <span class="text-[10px] bg-slate-100 text-slate-500 px-2 py-0.5 rounded-full font-medium">Hari Ini</span>
-            </div>
-
-            <div class="flex-1 space-y-3">
-                @php
-                $actColorMap = [
-                    'emerald' => ['dot' => 'bg-emerald-500', 'ring' => 'bg-emerald-50', 'icon' => 'text-emerald-600'],
-                    'blue'    => ['dot' => 'bg-blue-500',    'ring' => 'bg-blue-50',    'icon' => 'text-blue-600'],
-                    'indigo'  => ['dot' => 'bg-indigo-500',  'ring' => 'bg-indigo-50',  'icon' => 'text-indigo-600'],
-                    'amber'   => ['dot' => 'bg-amber-500',   'ring' => 'bg-amber-50',   'icon' => 'text-amber-600'],
-                ];
-                $actIconMap = [
-                    'selesai'     => '<path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>',
-                    'masuk'       => '<path stroke-linecap="round" stroke-linejoin="round" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/>',
-                    'baru'        => '<path stroke-linecap="round" stroke-linejoin="round" d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z"/>',
-                    'reschedule'  => '<path stroke-linecap="round" stroke-linejoin="round" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/>',
-                ];
-                @endphp
-
-                @foreach($activities as $activity)
-                @php
-                    $ac = $actColorMap[$activity['color']];
-                @endphp
-                <div class="flex items-start gap-3 p-3 rounded-xl hover:bg-slate-50 transition-colors cursor-default">
-                    <div class="flex-shrink-0 w-8 h-8 {{ $ac['ring'] }} rounded-full flex items-center justify-center">
-                        <svg class="w-4 h-4 {{ $ac['icon'] }}" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                            {!! $actIconMap[$activity['type']] !!}
-                        </svg>
-                    </div>
-                    <div class="flex-1 min-w-0">
-                        <p class="text-xs font-semibold text-slate-700 truncate">{{ $activity['title'] }}</p>
-                        <p class="text-[11px] text-slate-400 truncate mt-0.5">{{ $activity['desc'] }}</p>
-                    </div>
-                    <span class="flex-shrink-0 text-[10px] text-slate-400 font-medium mt-0.5">{{ $activity['time'] }}</span>
-                </div>
-                @endforeach
-            </div>
-
-            <a href="#" class="mt-4 flex items-center justify-center gap-1.5 text-xs text-blue-600 font-semibold hover:text-blue-700 transition-colors py-2 rounded-lg hover:bg-blue-50">
-                <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
-                    <path stroke-linecap="round" stroke-linejoin="round" d="M5 12h14M12 5l7 7-7 7"/>
-                </svg>
-                Lihat semua log aktivitas
-            </a>
 
         </div>
 
