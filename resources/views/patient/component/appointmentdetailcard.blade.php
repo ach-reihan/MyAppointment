@@ -35,21 +35,12 @@
                 </div>
             </div>
 
-            <div class="col-lg-6">
+            <div class="col-12">
                 <h6 class="text-muted small fw-bold text-uppercase mb-2">
                     <i class="bi bi-file-text me-1"></i> Keluhan Utama
                 </h6>
                 <div class="bg-light p-3 rounded-3 small text-dark border border-light-subtle h-100">
                     {{ $appointment['complaint'] }}
-                </div>
-            </div>
-
-            <div class="col-lg-6">
-                <h6 class="text-muted small fw-bold text-uppercase mb-2">
-                    <i class="bi bi-card-list me-1"></i> Riwayat Penyakit (Catatan)
-                </h6>
-                <div class="bg-light p-3 rounded-3 small text-dark border border-light-subtle h-100">
-                    {{ $appointment['internal_note'] }}
                 </div>
             </div>
         </div>
