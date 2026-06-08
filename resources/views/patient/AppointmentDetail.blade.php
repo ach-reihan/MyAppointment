@@ -28,7 +28,7 @@
             <div class="card border-0 shadow-sm rounded-4 mb-4">
                 <div class="card-header bg-white border-bottom-0 pt-4 pb-0 px-4 d-flex justify-content-between align-items-start">
                     <div>
-                        <span class="badge bg-success bg-opacity-10 text-success rounded-pill mb-2 px-3 py-2 fw-semibold">
+                        <span class="badge bg-{{ $appointment['status_color'] }} bg-opacity-10 text-{{ $appointment['status_color'] }} rounded-pill mb-2 px-3 py-2 fw-semibold">
                             {{ $appointment['status'] }}
                         </span>
                         <h5 class="fw-bold mb-0">Detail Janji Temu</h5>

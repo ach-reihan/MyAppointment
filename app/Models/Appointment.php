@@ -6,6 +6,7 @@ use Database\Factories\AppointmentFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Concerns\HasUlids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class Appointment extends Model
@@ -13,6 +14,11 @@ class Appointment extends Model
     use HasUlids, HasFactory;
 
     protected $guarded = [];
+
+    public function medicalRecord(): HasOne
+    {
+        return $this->hasOne(MedicalRecord::class);
+    }
 
     public function patient(): BelongsTo
     {

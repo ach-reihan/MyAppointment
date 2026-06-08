@@ -113,4 +113,71 @@ class PatientAppointmentHistoryTest extends TestCase
         $detailResponse->assertSee('Pendaftaran Dibatalkan');
         $detailResponse->assertSee('Tidak ada tindakan (Dibatalkan)');
     }
+
+    public function test_completed_appointment_moves_to_history(): void
+    {
+        // 1. Create a completed appointment (e.g. marked completed by admin, without medical record)
+        $completedApptNoRecord = Appointment::create([
+            'patient_id' => $this->patient->id,
+            'doctor_id' => $this->doctor->id,
+            'clinic_id' => $this->clinic->id,
+            'appointment_datetime' => Carbon::now()->subDays(3),
+            'status' => 'completed',
+            'complaint' => 'Sakit pinggang',
+        ]);
+
+        // 2. Create a completed appointment with medical record (completed by doctor)
+        $completedApptWithRecord = Appointment::create([
+            'patient_id' => $this->patient->id,
+            'doctor_id' => $this->doctor->id,
+            'clinic_id' => $this->clinic->id,
+            'appointment_datetime' => Carbon::now()->subDays(1),
+            'status' => 'completed',
+            'complaint' => 'Sakit mata',
+        ]);
+
+        $medicalRecord = MedicalRecord::create([
+            'patient_id' => $this->patient->id,
+            'doctor_id' => $this->doctor->id,
+            'appointment_id' => $completedApptWithRecord->id,
+            'checkup_date' => Carbon::now()->subDays(1),
+            'diagnoses' => 'Kelelahan mata',
+            'action' => 'Diberikan tetes mata',
+            'prescription' => 'Tetes Mata Cendo X',
+        ]);
+
+        // 3. Authenticate patient and run service calls
+        $this->actingAs($this->patientUser);
+        $service = app(PatientServices::class);
+
+        $upcoming = $service->getUpcomingAppointments();
+        $history = $service->getPatientHistory();
+
+        // Upcoming should not contain completed appointments
+        $this->assertCount(0, $upcoming);
+
+        // History should contain both completed appointments
+        $this->assertCount(2, $history);
+
+        // Assertions for appointment with medical record
+        $this->assertEquals($completedApptWithRecord->id, $history[0]['id']);
+        $this->assertEquals('Kelelahan mata', $history[0]['diagnosis']);
+        $this->assertEquals('Diberikan tetes mata', $history[0]['treatment']);
+
+        // Assertions for appointment without medical record (completed by admin)
+        $this->assertEquals($completedApptNoRecord->id, $history[1]['id']);
+        $this->assertEquals('Pemeriksaan Selesai', $history[1]['diagnosis']);
+        $this->assertEquals('Tidak ada tindakan (Selesai)', $history[1]['treatment']);
+
+        // Test Medical History Detail views
+        $detailResponseRecord = $this->get(route('patient.MedicalHistory.Detail', $completedApptWithRecord->id));
+        $detailResponseRecord->assertStatus(200);
+        $detailResponseRecord->assertSee('Kelelahan mata');
+        $detailResponseRecord->assertSee('Diberikan tetes mata');
+
+        $detailResponseNoRecord = $this->get(route('patient.MedicalHistory.Detail', $completedApptNoRecord->id));
+        $detailResponseNoRecord->assertStatus(200);
+        $detailResponseNoRecord->assertSee('Pemeriksaan Selesai');
+        $detailResponseNoRecord->assertSee('Tidak ada tindakan (Selesai)');
+    }
 }
