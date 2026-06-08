@@ -81,15 +81,20 @@
 
                     @forelse($patients as $patient)
                         @php
-                            $targetRoute =
-                                $patient['status'] === 'Menunggu'
-                                    ? route('examination.Show', $patient['id'])
-                                    : route('examination.Detail', $patient['id']);
+                            $targetRoute = match ($patient['status']) {
+                                'Pending' => route('examination.Index'),
+                                'Disetujui' => route('examination.Show', $patient['id']),
+                                'Selesai' => route('examination.Detail', $patient['id']),
+                                default => route('examination.Index'),
+                            };
 
-                            $badgeClass =
-                                $patient['status'] === 'Menunggu'
-                                    ? 'bg-warning bg-opacity-10 text-warning'
-                                    : 'bg-success bg-opacity-10 text-success';
+                            $badgeClass = match ($patient['status']) {
+                                'Pending' => 'bg-warning bg-opacity-10 text-warning',
+                                'Disetujui' => 'bg-primary bg-opacity-10 text-primary',
+                                'Selesai' => 'bg-success bg-opacity-10 text-success',
+                                'Batal' => 'bg-danger bg-opacity-10 text-danger',
+                                default => 'bg-secondary bg-opacity-10 text-secondary',
+                            };
                         @endphp
 
                         <a href="{{ $targetRoute }}" class="text-decoration-none text-dark"
