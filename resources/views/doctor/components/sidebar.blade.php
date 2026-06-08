@@ -5,7 +5,7 @@
         </div>
         <div>
             <h5 class="mb-0 text-primary fw-bold" style="font-size: 1.1rem;">MyAppointment</h5>
-            <small class="text-muted" style="font-size: 0.75rem;">Medical Administrator</small>
+            <small class="text-muted" style="font-size: 0.75rem;">Medical Doctor</small>
         </div>
     </div>
 
