@@ -42,7 +42,7 @@
                 </div>
 
                 <div>
-                    <div class="flex items-center justify-between mb-2">
+                    <div class="flex items-center justify-between mb-2 mt-2">
                         <label class="block text-[11px] font-bold text-gray-500 uppercase tracking-wider">Kata Sandi</label>
                     </div>
                     <div class="relative" x-data="{ show: false }">
@@ -59,7 +59,7 @@
                     </div>
                 </div>
 
-                <button type="submit" class="w-full bg-blue-600 text-white font-bold py-3.5 rounded-xl hover:bg-blue-700 transition-colors shadow-lg shadow-blue-600/20 mt-4 flex justify-center items-center gap-2">
+                <button type="submit" class="w-full bg-blue-600 text-white font-bold py-3.5 rounded-xl hover:bg-blue-700 transition-colors shadow-lg shadow-blue-600/20 mt-6 flex justify-center items-center gap-2">
                     Masuk Sekarang
                     <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" /></svg>
                 </button>
