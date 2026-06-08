@@ -3,7 +3,7 @@ use App\Http\Controllers\Patient\PatientController;
 use App\Http\Controllers\Patient\FormController;
 use Illuminate\Support\Facades\Route;
 
-Route::prefix('patient')->name('patient.')->group(function () {
+Route::prefix('patient')->middleware(['auth', 'role:patient'])->group(function () {
     
     Route::get('/patient', [PatientController::class, 'dashboard'])->name('DashboardPatient');
     Route::get('/FormAppointment', [FormController::class, 'createAppointment'])->name('FormAppointment');
