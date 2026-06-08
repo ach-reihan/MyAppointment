@@ -53,16 +53,28 @@ class ExaminationController
 
     public function store(Request $request, $id)
     {
-        // Validasi inputan dari form
+        // Validasi data inputan
         $request->validate([
-            'diagnoses' => 'required|string',
-            'action' => 'required|string',
+            'diagnoses'    => 'required|string',
+            'action'       => 'required|string',
             'prescription' => 'required|string',
         ]);
 
-        // Panggil service untuk menyimpan ke database
-        $this->examinationService->storeMedicalRecord($id, $request->all());
+        try {
+            // Panggil service untuk memproses ke database
+            $this->examinationService->storeExamination($id, $request->all());
 
-        return response()->json(['success' => true]);
+            // Kembalikan respon JSON agar dibaca oleh fetch di Alpine.js
+            return response()->json([
+                'success' => true,
+                'message' => 'Pemeriksaan pasien berhasil disimpan.'
+            ]);
+            
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Terjadi kesalahan: ' . $e->getMessage()
+            ], 500);
+        }
     }
 }

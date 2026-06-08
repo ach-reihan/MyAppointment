@@ -50,7 +50,7 @@
             <div x-data="{
                 activeTab: 'input',
                 showSuccessModal: false,
-                
+            
                 formData: {
                     diagnoses: '',
                     action: '',
@@ -60,8 +60,9 @@
             
                 async submitPemeriksaan() {
                     try {
-                        const url = '{{ url('doctor/examination/' . $appointment->id . '/store') }}';
-                        
+                        // PERBAIKAN: Gunakan helper route() dan $patient['id']
+                        const url = '{{ route('examination.Store', $patient['id']) }}';
+            
                         const response = await fetch(url, {
                             method: 'POST',
                             headers: {
@@ -71,12 +72,12 @@
                             },
                             body: JSON.stringify(this.formData)
                         });
-                        
+            
                         const result = await response.json();
                         if (response.ok && result.success) {
                             this.showSuccessModal = true;
                         } else {
-                            alert('Gagal menyimpan rekam medis. Periksa kembali form Anda.');
+                            alert('Gagal menyimpan rekam medis: ' + (result.message || 'Periksa kembali form Anda.'));
                         }
                     } catch (error) {
                         console.error(error);
@@ -106,29 +107,34 @@
 
                     {{-- section pemeriksaan --}}
                     <div x-show="activeTab === 'input'" x-transition.opacity.duration.300ms>
-                        
+
                         <form @submit.prevent="submitPemeriksaan()">
                             <div class="row g-4">
                                 <div class="col-lg-8">
                                     <div class="card border-0 shadow-sm rounded-4">
                                         <div class="card-body p-4">
                                             <h5 class="fw-bold mb-4">Detail Pemeriksaan</h5>
-                                            
+
                                             <div class="mb-4">
-                                                <label class="form-label text-muted small fw-semibold">Diagnosa Medis</label>
-                                                <textarea x-model="formData.diagnoses" required class="form-control custom-input p-3" rows="4" placeholder="Tuliskan hasil diagnosa pasien di sini..."></textarea>
+                                                <label class="form-label text-muted small fw-semibold">Diagnosa
+                                                    Medis</label>
+                                                <textarea x-model="formData.diagnoses" required class="form-control custom-input p-3" rows="4"
+                                                    placeholder="Tuliskan hasil diagnosa pasien di sini..."></textarea>
                                             </div>
                                             <div class="mb-4">
-                                                <label class="form-label text-muted small fw-semibold">Tindakan Medis</label>
-                                                <textarea x-model="formData.action" required class="form-control custom-input p-3" rows="4" placeholder="Deskripsikan tindakan yang diberikan kepada pasien..."></textarea>
+                                                <label class="form-label text-muted small fw-semibold">Tindakan
+                                                    Medis</label>
+                                                <textarea x-model="formData.action" required class="form-control custom-input p-3" rows="4"
+                                                    placeholder="Deskripsikan tindakan yang diberikan kepada pasien..."></textarea>
                                             </div>
                                             <div class="mb-3">
                                                 <label class="form-label text-muted small fw-semibold">
                                                     <i class="bi bi-capsule me-1"></i> Resep Dokter
                                                 </label>
-                                                <textarea x-model="formData.prescription" required class="form-control custom-input p-3" rows="4" placeholder="Tuliskan resep obat yang diberikan kepada pasien..."></textarea>   
+                                                <textarea x-model="formData.prescription" required class="form-control custom-input p-3" rows="4"
+                                                    placeholder="Tuliskan resep obat yang diberikan kepada pasien..."></textarea>
                                             </div>
-                                            
+
                                         </div>
                                     </div>
                                 </div>
@@ -139,15 +145,17 @@
                                             <h5 class="fw-bold mb-4">Ringkasan Sesi</h5>
                                             <div class="d-flex justify-content-between mb-3 small">
                                                 <span class="text-muted">Tanggal</span>
-                                                <span class="fw-semibold">{{ \Carbon\Carbon::now()->format('d M Y') }}</span>
+                                                <span
+                                                    class="fw-semibold">{{ \Carbon\Carbon::now()->format('d M Y') }}</span>
                                             </div>
                                             <div class="d-flex justify-content-between mb-3 small">
                                                 <span class="text-muted">Waktu Mulai</span>
-                                                <span class="fw-semibold">{{ \Carbon\Carbon::now()->format('H:i') }}</span>
+                                                <span
+                                                    class="fw-semibold">{{ \Carbon\Carbon::now()->format('H:i') }}</span>
                                             </div>
                                             <div class="d-flex justify-content-between mb-3 small">
                                                 <span class="text-muted">Dokter Pemeriksa</span>
-                                                <span class="fw-semibold">{{ $doctorName }}</span>                                          
+                                                <span class="fw-semibold">{{ $doctorName }}</span>
                                             </div>
                                             <div class="d-flex justify-content-between mb-4 small">
                                                 <span class="text-muted">Poliklinik</span>
@@ -158,15 +166,18 @@
                                                     <i class="bi bi-info-circle text-dark"></i>
                                                     <span class="fw-bold text-dark small">Catatan Internal</span>
                                                 </div>
-                                                <textarea x-model="formData.catatan_internal" class="form-control bg-transparent border-0 p-0 text-muted small shadow-none"
-                                                    style="font-style: italic; resize: none;" rows="3" placeholder="Tambahkan catatan internal opsional di sini..."></textarea>
+                                                <textarea x-model="formData.catatan_internal"
+                                                    class="form-control bg-transparent border-0 p-0 text-muted small shadow-none"
+                                                    style="font-style: italic; resize: none;" rows="3"
+                                                    placeholder="Tambahkan catatan internal opsional di sini..."></textarea>
                                             </div>
                                         </div>
                                     </div>
                                 </div>
                             </div>
 
-                            <button type="submit" class="btn btn-primary floating-btn d-flex align-items-center gap-2 shadow-lg mt-4">
+                            <button type="submit"
+                                class="btn btn-primary floating-btn d-flex align-items-center gap-2 shadow-lg mt-4">
                                 <i class="bi bi-save"></i> Simpan & Selesai Periksa
                             </button>
                         </form>
@@ -181,29 +192,32 @@
 
                 <div x-show="showSuccessModal" x-transition.opacity style="display: none;">
                     <div class="modal-backdrop fade show" style="background-color: rgba(0,0,0,0.4);"></div>
-                    
+
                     <div class="modal fade show d-block" tabindex="-1" aria-hidden="true">
                         <div class="modal-dialog modal-dialog-centered">
                             <div class="modal-content border-0 shadow-lg rounded-4">
                                 <div class="modal-body p-5 text-center">
-                                    
+
                                     <div class="mb-4 d-flex justify-content-center">
-                                        <div class="bg-success bg-opacity-10 text-success rounded-circle d-flex align-items-center justify-content-center" style="width: 80px; height: 80px;">
+                                        <div class="bg-success bg-opacity-10 text-success rounded-circle d-flex align-items-center justify-content-center"
+                                            style="width: 80px; height: 80px;">
                                             <i class="bi bi-check-lg" style="font-size: 3rem;"></i>
                                         </div>
                                     </div>
-                                    
+
                                     <h4 class="fw-bold mb-2">Pemeriksaan Selesai!</h4>
                                     <p class="text-muted mb-4 small">
-                                        Data rekam medis pasien telah berhasil disimpan ke dalam sistem. Antrean pasien ini akan ditandai sebagai "Selesai".
+                                        Data rekam medis pasien telah berhasil disimpan ke dalam sistem. Antrean pasien
+                                        ini akan ditandai sebagai "Selesai".
                                     </p>
-                                    
+
                                     <div class="d-flex flex-column gap-2">
-                                        <a href="{{ route('examination.Index') }}" class="btn btn-primary rounded-pill py-2 fw-semibold">
+                                        <a href="{{ route('examination.Index') }}"
+                                            class="btn btn-primary rounded-pill py-2 fw-semibold">
                                             Kembali ke Daftar Antrean
                                         </a>
                                     </div>
-                                    
+
                                 </div>
                             </div>
                         </div>
