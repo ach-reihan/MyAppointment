@@ -120,35 +120,79 @@ class MasterDataService
     // Users CRUD
     public function createUser(array $data): User
     {
-        $roleMap = ['Admin' => 'admin', 'Dokter' => 'doctor', 'Pasien' => 'patient'];
-        $role = $roleMap[$data['role']] ?? 'patient';
+        return DB::transaction(function () use ($data) {
+            $roleMap = ['Admin' => 'admin', 'Dokter' => 'doctor', 'Pasien' => 'patient'];
+            $role = $roleMap[$data['role']] ?? 'patient';
 
-        return User::create([
-            'name'     => ucfirst($data['username']),
-            'username' => $data['username'],
-            'email'    => $data['username'] . '@hospital.com',
-            'password' => Hash::make($data['password']),
-            'role'     => $role,
-        ]);
+            $user = User::create([
+                'name'     => ucfirst($data['username']),
+                'username' => $data['username'],
+                'email'    => $data['username'] . '@hospital.com',
+                'password' => Hash::make($data['password']),
+                'role'     => $role,
+            ]);
+
+            if ($role === 'doctor') {
+                Doctor::create([
+                    'user_id'        => $user->id,
+                    'specialization' => 'Umum',
+                ]);
+            } elseif ($role === 'patient') {
+                Patient::create([
+                    'user_id'       => $user->id,
+                    'phone_number'  => '-',
+                    'date_of_birth' => '2000-01-01',
+                    'address'       => '-',
+                ]);
+            }
+
+            return $user;
+        });
     }
 
     public function updateUser($id, array $data): User
     {
-        $user = User::findOrFail($id);
-        
-        $roleMap = ['Admin' => 'admin', 'Dokter' => 'doctor', 'Pasien' => 'patient'];
-        $role = $roleMap[$data['role']] ?? $user->role;
+        return DB::transaction(function () use ($id, $data) {
+            $user = User::findOrFail($id);
+            
+            $roleMap = ['Admin' => 'admin', 'Dokter' => 'doctor', 'Pasien' => 'patient'];
+            $role = $roleMap[$data['role']] ?? $user->role;
 
-        $updateData = [
-            'role' => $role,
-        ];
+            $updateData = [
+                'role' => $role,
+            ];
 
-        if (!empty($data['password'])) {
-            $updateData['password'] = Hash::make($data['password']);
-        }
+            if (!empty($data['password'])) {
+                $updateData['password'] = Hash::make($data['password']);
+            }
 
-        $user->update($updateData);
-        return $user;
+            $user->update($updateData);
+
+            if ($role === 'doctor') {
+                if (!Doctor::where('user_id', $user->id)->exists()) {
+                    Doctor::create([
+                        'user_id'        => $user->id,
+                        'specialization' => 'Umum',
+                    ]);
+                }
+                Patient::where('user_id', $user->id)->delete();
+            } elseif ($role === 'patient') {
+                if (!Patient::where('user_id', $user->id)->exists()) {
+                    Patient::create([
+                        'user_id'       => $user->id,
+                        'phone_number'  => '-',
+                        'date_of_birth' => '2000-01-01',
+                        'address'       => '-',
+                    ]);
+                }
+                Doctor::where('user_id', $user->id)->delete();
+            } else {
+                Doctor::where('user_id', $user->id)->delete();
+                Patient::where('user_id', $user->id)->delete();
+            }
+
+            return $user;
+        });
     }
 
     public function deleteUser($id): bool
