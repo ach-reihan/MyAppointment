@@ -33,7 +33,19 @@
 
                         <div x-data="{ showSuccessModal: false }">
 
-                            <form action="" method="POST">
+                            @if ($errors->any())
+                                <div class="alert alert-danger alert-dismissible fade show border-0 shadow-sm rounded-3 p-3 mb-4" role="alert">
+                                    <ul class="mb-0 small ps-3">
+                                        @foreach ($errors->all() as $error)
+                                            <li>{{ $error }}</li>
+                                        @endforeach
+                                    </ul>
+                                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                                </div>
+                            @endif
+
+                            <form action="{{ route('FormAppointment.store') }}" method="POST">
+                                @csrf
                                 <div class="row g-4 mb-4">
                                     <div>
                                         <label class="form-label text-muted fw-bold text-uppercase form-label-custom">
@@ -77,7 +89,7 @@
                                             placeholder="Jelaskan riwayat penyakit Anda..."></textarea>
                                     </div>
 
-                                    <button type="button" @click="showSuccessModal = true"
+                                    <button type="submit"
                                         class="btn btn-primary w-100 py-3 rounded-3 fw-bold mb-3 d-flex justify-content-center align-items-center gap-2">
                                         <i class="bi bi-send-fill"></i> Daftar Janji Temu Sekarang
                                     </button>
@@ -143,6 +155,7 @@
             </div>
         </div>
     </main>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 
 </html>
