@@ -3,7 +3,8 @@
 namespace App\Http\Controllers\Doctor;
 
 use Illuminate\Http\Request;
-use Illuminate\View\View;
+use Illuminate\Support\Facades\Auth;
+use App\Models\Doctor;
 use App\Services\Doctor\ExaminationServices; 
 
 class ExaminationController 
@@ -24,13 +25,16 @@ class ExaminationController
     public function show($id)
     {
         $patient = $this->examinationService->getPatientDetails($id);
-        
         $histories = $this->examinationService->getMedicalHistory($id);
-        $doctorName = 'Dr. Healthink S.Ked, M.Ked';
 
         if (!$patient) {
             abort(404, 'Pasien tidak ditemukan');
         }
+
+        // Ambil nama dokter dari sesi auth
+        $user = Auth::user();
+        $doctor = $user ? $user->doctor : Doctor::first();
+        $doctorName = $doctor ? $doctor->display_name : 'Nama Dokter';
 
         return view('doctor.examination.Show', compact('patient', 'histories', 'doctorName'));
     }

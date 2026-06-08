@@ -3,13 +3,15 @@
 namespace App\Http\Controllers\Doctor;
 
 use Illuminate\Http\Request;
-use Illuminate\View\View;
+use Illuminate\Support\Facades\Auth;
+use App\Models\Doctor;
 use App\Services\Doctor\ExaminationServices; 
 
 class DashboardController
 {
    public function index(ExaminationServices $examinationService)
     {
+        // 1. Ambil data pasien dari database (via Service)
         $patients = $examinationService->getTodayQueue();
         
         // 2. Lakukan perhitungan statistik
@@ -26,9 +28,19 @@ class DashboardController
         
         $totalJadwal = $sisaAntrean + $pasienSelesai;
 
-        $doctorName = 'Dr. Healthink S.Ked, M.Ked'; 
-        $polyclinic = 'Poli Umum';
-        // 3. Kirim data yang sudah dihitung beserta data patients ke View
+        // 3. Ambil data Profil Dokter dari DB
+        $user = Auth::user();
+        $doctor = $user ? $user->doctor : Doctor::with('clinics')->first();
+        
+        $doctorName = $doctor ? $doctor->display_name : 'Nama Dokter Tidak Ditemukan';
+        
+        // Ambil klinik/poli pertama yang terhubung dengan dokter ini
+        $polyclinic = 'Poli Umum'; // Fallback default
+        if ($doctor && $doctor->clinics->count() > 0) {
+            $polyclinic = $doctor->clinics->first()->name;
+        }
+
+        // 4. Kirim data yang sudah dihitung beserta data patients ke View
         return view('doctor.DashboardDoctor', compact(
             'patients', 
             'doctorName', 
