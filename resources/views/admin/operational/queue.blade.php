@@ -38,13 +38,15 @@
 
         async markAsDone(real_id) {
             try {
-                const response = await fetch(`/admin/operational/queue/${real_id}/done`, {
-                    method: 'PUT',
+                const baseUrl = '{{ url('/admin/operational/queue') }}';
+                const response = await fetch(`${baseUrl}/${real_id}/done`, {
+                    method: 'POST', // Gunakan POST untuk XAMPP
                     headers: {
                         'Content-Type': 'application/json',
                         'X-CSRF-TOKEN': '{{ csrf_token() }}',
                         'Accept': 'application/json'
-                    }
+                    },
+                    body: JSON.stringify({ _method: 'PUT' }) // Method Spoofing
                 });
                 
                 const result = await response.json();
@@ -67,13 +69,15 @@
         async confirmDelete() {
             this.openDeleteModal = false;
             try {
-                const response = await fetch(`/admin/operational/queue/${this.deletingId}`, {
-                    method: 'DELETE',
+                const baseUrl = '{{ url('/admin/operational/queue') }}';
+                const response = await fetch(`${baseUrl}/${this.deletingId}`, {
+                    method: 'POST', // Gunakan POST untuk XAMPP
                     headers: {
                         'Content-Type': 'application/json',
                         'X-CSRF-TOKEN': '{{ csrf_token() }}',
                         'Accept': 'application/json'
-                    }
+                    },
+                    body: JSON.stringify({ _method: 'DELETE' }) // Method Spoofing
                 });
                 
                 const result = await response.json();
@@ -88,6 +92,7 @@
             }
         },
 
+        // Fungsi ini yang sebelumnya tidak sengaja terhapus
         openNewPatientModal() {
             this.formQueue = {
                 patient_id: '',
@@ -102,7 +107,8 @@
 
         async saveNewQueue() {
             try {
-                const response = await fetch('/admin/operational/queue', {
+                const baseUrl = '{{ url('/admin/operational/queue') }}';
+                const response = await fetch(baseUrl, {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
