@@ -1,7 +1,7 @@
 {{-- card janji temu yang di dashboard  --}}
 @forelse($upcomingAppointments as $appointment)
     <div class="card border-0 shadow-sm rounded-4 mb-4 overflow-hidden" 
-         style="border-left: 6px solid {{ $appointment['status'] === 'MENUNGGU' ? '#ffc107' : '#0d6efd' }} !important;">
+         style="border-left: 6px solid {{ $appointment['status'] === 'MENUNGGU' ? '#ffc107' : ($appointment['status'] === 'DIBATALKAN' ? '#dc3545' : '#0d6efd') }} !important;">
         <div class="card-body p-4">
             <div class="d-flex justify-content-between align-items-center">
                 
