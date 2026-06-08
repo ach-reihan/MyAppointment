@@ -54,8 +54,7 @@
                 formData: {
                     diagnoses: '',
                     action: '',
-                    prescription: '',
-                    catatan_internal: ''
+                    prescription: ''
                 },
             
                 async submitPemeriksaan() {
@@ -160,16 +159,6 @@
                                             <div class="d-flex justify-content-between mb-4 small">
                                                 <span class="text-muted">Poliklinik</span>
                                                 <span class="fw-semibold">Poli Sesuai Jadwal</span>
-                                            </div>
-                                            <div class="bg-light border p-3 rounded-3 mt-4">
-                                                <div class="d-flex align-items-center gap-2 mb-2">
-                                                    <i class="bi bi-info-circle text-dark"></i>
-                                                    <span class="fw-bold text-dark small">Catatan Internal</span>
-                                                </div>
-                                                <textarea x-model="formData.catatan_internal"
-                                                    class="form-control bg-transparent border-0 p-0 text-muted small shadow-none"
-                                                    style="font-style: italic; resize: none;" rows="3"
-                                                    placeholder="Tambahkan catatan internal opsional di sini..."></textarea>
                                             </div>
                                         </div>
                                     </div>
